@@ -1,0 +1,48 @@
+from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
+from uuid import uuid4
+import datetime
+
+from ....core.entities.alert import Alert, AlertAction
+from .base_db_model import Base, UUID_CHAR
+
+# For SQLite compatibility with JSONB
+from sqlalchemy.types import JSON as FallbackJSON
+
+JSONBType = JSONB().with_variant(FallbackJSON, "sqlite")
+
+class AlertModel(Base):
+    __tablename__ = 'alerts'
+    
+    id = Column(UUID_CHAR, primary_key=True, default=uuid4)
+    transaction_id = Column(UUID_CHAR, ForeignKey('transactions.id'), nullable=False, index=True)
+    
+    action = Column(Enum(AlertAction), nullable=False)
+    ml_score = Column(Float, nullable=True)
+    final_score = Column(Float, nullable=True)
+    rule_hits = Column(JSONBType, nullable=True) # JSONB for performance 
+    
+    created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow)
+    created_by = Column(UUID_CHAR, ForeignKey('analysts.id'), nullable=True)
+
+    transaction = relationship("TransactionModel")
+    creator = relationship("AnalystModel")
+
+    def to_entity(self) -> Alert:
+        # Enriched fields
+        transaction_entity = self.transaction.to_entity() if self.transaction else None
+        creator_entity = self.creator.to_entity() if self.creator else None
+        
+        return Alert(
+            id=self.id,
+            transaction_id=self.transaction_id,
+            action=self.action,
+            ml_score=self.ml_score,
+            final_score=self.final_score,
+            rule_hits=self.rule_hits,
+            created_at=self.created_at,
+            created_by=self.created_by,
+            transaction=transaction_entity,
+            creator=creator_entity
+        )

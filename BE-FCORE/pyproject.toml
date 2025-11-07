@@ -1,0 +1,19 @@
+[project]
+name = "back_end"
+version = "0.1.0"
+
+dependencies = [
+    "fastapi",
+    "uvicorn",
+    "bcrypt",
+    "dotenv",
+    "python-jose",
+    "PyJWT",
+    "passlib[bcrypt]",
+    "python-multipart",
+    "sqlalchemy",
+    "pydantic-settings"
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
