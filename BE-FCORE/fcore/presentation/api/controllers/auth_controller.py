@@ -7,7 +7,7 @@ from ....application.use_cases.auth_use_case import AuthUseCase
 from ....core.errors.auth_errors import InvalidCredentialsError
 from ..schemas.analyst_schemas import AnalystLogin
 
-router = APIRouter(tags=["Authentication"])
+router = APIRouter(prefix='/auth',tags=["Authentication"])
 
 @router.post("/login", response_model=TokenResponse)
 def login(

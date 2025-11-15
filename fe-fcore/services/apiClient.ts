@@ -1,5 +1,5 @@
 // src/services/apiClient.ts
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
 
 export class ApiError extends Error {
   status: number;
@@ -17,6 +17,15 @@ type ReqOptions = {
   credentials?: RequestCredentials;
 };
 
+function resolveUrl(path: string): string {
+  const isAbsolute = /^https?:\/\//i.test(path);
+  if (isAbsolute) return path;
+  const base = RAW_BASE_URL.trim().replace(/\/+$/, '');
+  if (!base) throw new ApiError(500, 'Falta NEXT_PUBLIC_API_BASE_URL');
+  const p = path.startsWith('/') ? path : `/${path}`;
+  return `${base}${p}`;
+}
+
 async function request<T>(
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   path: string,
@@ -32,7 +41,9 @@ async function request<T>(
   const token = options?.token ?? null;
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const url = resolveUrl(path);
+
+  const res = await fetch(url, {
     method,
     headers,
     credentials: options?.credentials ?? 'include',
@@ -58,8 +69,8 @@ async function request<T>(
 }
 
 export const apiClient = {
-  get:      <T>(path: string, options?: ReqOptions) => request<T>('GET', path, undefined, options),
-  post: <T, B = unknown>(path: string, body: B, options?: ReqOptions) => request<T>('POST', path, body, options),
-  put:  <T, B = unknown>(path: string, body: B, options?: ReqOptions) => request<T>('PUT', path, body, options),
-  delete:   <T>(path: string, options?: ReqOptions) => request<T>('DELETE', path, undefined, options),
+  get:    <T>(path: string, options?: ReqOptions) => request<T>('GET', path, undefined, options),
+  post:   <T, B = unknown>(path: string, body: B, options?: ReqOptions) => request<T>('POST', path, body, options),
+  put:    <T, B = unknown>(path: string, body: B, options?: ReqOptions) => request<T>('PUT', path, body, options),
+  delete: <T>(path: string, options?: ReqOptions) => request<T>('DELETE', path, undefined, options),
 };
