@@ -5,16 +5,17 @@ from ..dependencies import get_auth_use_case, get_current_analyst
 from ..schemas.token_schemas import TokenResponse, TokenPayload
 from ....application.use_cases.auth_use_case import AuthUseCase
 from ....core.errors.auth_errors import InvalidCredentialsError
+from ..schemas.analyst_schemas import AnalystLogin
 
 router = APIRouter(tags=["Authentication"])
 
 @router.post("/login", response_model=TokenResponse)
 def login(
-    form_data: OAuth2PasswordRequestForm = Depends(),
+    form_data: AnalystLogin = Depends(),
     use_case: AuthUseCase = Depends(get_auth_use_case)
 ):
     try:
-        access_token, refresh_token = use_case.login(code=form_data.username, password=form_data.password)
+        access_token, refresh_token = use_case.login(code=form_data.code, password=form_data.password)
         return TokenResponse(access_token=access_token, refresh_token=refresh_token)
     except InvalidCredentialsError as e:
         raise HTTPException(

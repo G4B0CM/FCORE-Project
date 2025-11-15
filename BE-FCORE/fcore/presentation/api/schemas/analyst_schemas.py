@@ -23,3 +23,7 @@ class AnalystResponse(AnalystBase):
 
     class Config:
         from_attributes = True
+
+class AnalystLogin(BaseModel):
+    code : str = Field(...,pattern=r"^C\d{7,8}$")
+    password : str
