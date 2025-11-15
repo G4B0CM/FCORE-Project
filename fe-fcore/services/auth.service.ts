@@ -1,7 +1,42 @@
-import { apiClient } from './apiClient';
-import type { ValidateResponse } from '@/types/auth';
+// src/services/auth.service.ts
+'use server';
 
-export const authService = {
-    validate: (token?: string | null) =>
-        apiClient.post<ValidateResponse, unknown>('/auth/validate', {}, { token: token ?? null }),
-};
+import { cookies, headers } from 'next/headers';
+import { apiClient } from './apiClient';
+import { ACCESS_COOKIE, REFRESH_COOKIE, TOKEN_HEADER } from '@/lib/auth/cookies';
+import type { TokenResponse, TokenPayload } from '@/types/auth';
+
+export async function loginBackend(username: string, password: string): Promise<TokenResponse> {
+  const res = await apiClient.post<TokenResponse, { username: string; password: string }>('/auth/login', { username, password });
+  return res;
+}
+
+export async function setAuthCookies(tokens: TokenResponse) {
+  const cs = await cookies();
+  const common = { httpOnly: true, path: '/', sameSite: 'lax' as const, secure: process.env.NODE_ENV === 'production' };
+  cs.set(ACCESS_COOKIE, tokens.access_token, { ...common });
+  cs.set(REFRESH_COOKIE, tokens.refresh_token, { ...common });
+}
+
+export async function clearAuthCookies() {
+  const cs = await cookies();
+  cs.delete(ACCESS_COOKIE);
+  cs.delete(REFRESH_COOKIE);
+}
+
+export async function validateToken(): Promise<TokenPayload> {
+  const cs = await cookies();
+  const at = cs.get(ACCESS_COOKIE)?.value ?? '';
+  const h = new Headers(await headers());
+  h.set(TOKEN_HEADER, `Bearer ${at}`);
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/validate`, {
+    method: 'GET',
+    headers: h,
+    credentials: 'include',
+    cache: 'no-store',
+  });
+  if (!res.ok) {
+    throw new Error('Token inválido');
+  }
+  return (await res.json()) as TokenPayload;
+}
