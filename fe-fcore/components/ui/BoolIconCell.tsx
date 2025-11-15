@@ -3,7 +3,7 @@
 
 import { Button } from 'primereact/button';
 
-type Severity = 'primary' | 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast';
+type Severity = "help" | "secondary" | "success" | "info" | "warning" | "danger" | "contrast" | undefined;
 
 type Props = {
     value?: boolean | null;

@@ -22,7 +22,7 @@ export default function AppHeader({ onToggleSidebar, username }: Props) {
             </div>
             <div className="flex align-items-center gap-3">
                 <span className="text-700 hidden sm:inline">{username ?? 'Usuario'}</span>
-                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=fcore" alt="Avatar" className="w-3rem h-3rem border-circle surface-border border-1" />
+                <img src="https://api.dicebear.com/7.x/identicon/svg?seed=fcore" alt="Avatar" className="w-3rem h-3rem border-circle surface-border border" />
             </div>
         </header>
     );

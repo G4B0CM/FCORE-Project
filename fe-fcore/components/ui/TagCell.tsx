@@ -3,7 +3,7 @@
 
 import { Tag } from 'primereact/tag';
 
-type Severity = 'primary' | 'success' | 'info' | 'warning' | 'danger' | 'secondary' | 'contrast';
+type Severity = "secondary" | "success" | "info" | "warning" | "danger" | "contrast" | null | undefined;
 
 type Props = {
     value?: React.ReactNode;

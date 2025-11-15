@@ -15,7 +15,7 @@ def login(
     use_case: AuthUseCase = Depends(get_auth_use_case)
 ):
     try:
-        access_token, refresh_token = use_case.login(code=form_data.code, password=form_data.password)
+        access_token, refresh_token = use_case.login(code=form_data.username, password=form_data.password)
         return TokenResponse(access_token=access_token, refresh_token=refresh_token)
     except InvalidCredentialsError as e:
         raise HTTPException(

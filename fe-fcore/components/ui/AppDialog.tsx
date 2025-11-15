@@ -10,10 +10,10 @@ export type DialogPosition =
     | 'bottom'
     | 'left'
     | 'right'
-    | 'topleft'
-    | 'topright'
-    | 'bottomleft'
-    | 'bottomright';
+    | 'top-left'
+    | 'top-right'
+    | 'bottom-left'
+    | 'bottom-right';
 
 export type AppDialogProps = {
     visible: boolean;

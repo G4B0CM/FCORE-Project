@@ -142,7 +142,7 @@ export default function FileUploadField(props: FileUploadFieldProps) {
                 <button
                     type="button"
                     className="p-button p-button-text p-button-danger p-button-rounded"
-                    onClick={() => opts.onRemove(file)}
+                    onClick={(e) => opts.onRemove(e)}
                 >
                     <i className="pi pi-times" />
                 </button>
