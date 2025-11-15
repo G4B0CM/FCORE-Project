@@ -1,5 +1,5 @@
 // src/types/rule.ts
-export type RuleSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type RuleSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export type RuleResponse = {
   id: string;

@@ -9,10 +9,10 @@ import FormSwitchField from '@/components/form/FormSwitchField';
 import { required, minLen, selectRequired } from '@/components/form/validators';
 
 const SEVERITY_OPTIONS = [
-  { label: 'LOW', value: 'LOW' },
-  { label: 'MEDIUM', value: 'MEDIUM' },
-  { label: 'HIGH', value: 'HIGH' },
-  { label: 'CRITICAL', value: 'CRITICAL' },
+  { label: 'LOW', value: 'low' },
+  { label: 'MEDIUM', value: 'medium' },
+  { label: 'HIGH', value: 'high' },
+  { label: 'CRITICAL', value: 'critical' },
 ];
 
 type Props = {
