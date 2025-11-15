@@ -7,7 +7,9 @@ import { ACCESS_COOKIE, REFRESH_COOKIE, TOKEN_HEADER } from '@/lib/auth/cookies'
 import type { TokenResponse, TokenPayload } from '@/types/auth';
 
 export async function loginBackend(username: string, password: string): Promise<TokenResponse> {
-  const res = await apiClient.post<TokenResponse, { username: string; password: string }>('/auth/login', { username, password });
+  const qs = new URLSearchParams({ username, password }).toString();
+  const path = `/auth/login?${qs}`;
+  const res = await apiClient.post<TokenResponse, undefined>(path, undefined as unknown as undefined, { credentials: 'include' });
   return res;
 }
 

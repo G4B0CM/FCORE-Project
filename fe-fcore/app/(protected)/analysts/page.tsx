@@ -1,7 +1,9 @@
 // src/app/(protected)/analysts/page.tsx
 import { requireRole } from '@/lib/auth/server';
-import AnalystsClient from './AnalystsClient';
+import AnalystsTable from './components/AnalystsTable';
 
 export default async function AnalystsPage() {
-    return <AnalystsClient />;
+  const { ok, redirectTo } = await requireRole('admin');
+  if (!ok) return null;
+  return <AnalystsTable />;
 }
