@@ -4,7 +4,7 @@
 import FormDialog from '@/components/form/FormDialog';
 import FormInputField from '@/components/form/FormInputField';
 import FormNumberField from '@/components/form/FormNumberField';
-import { required, minLen, numberBetween } from '@/components/form/validators';
+import { required, minLen, numberBetween, cedulaValidator } from '@/components/form/validators';
 
 type Props = {
   visible: boolean;
@@ -35,7 +35,7 @@ export default function CustomerFormDialog({ visible, onClose, title, initialVal
           <FormInputField name="full_name" label="Nombre completo" validators={[required, minLen(3)]} />
         </div>
         <div className="col-12 md:col-6">
-          <FormInputField name="document_number" label="Documento" validators={[required, minLen(5)]} />
+          <FormInputField name="document_number" label="Documento" validators={[ cedulaValidator, minLen(5)]} />
         </div>
         <div className="col-12 md:col-6">
           <FormInputField name="segment" label="Segmento" />

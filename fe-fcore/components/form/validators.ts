@@ -9,7 +9,7 @@ export const hasDigit: TextValidator = (v) => (/\d/.test(v) ? null : 'Debe inclu
 export const matchField = (otherName: string, otherValue: () => string): TextValidator => (v) => (v === otherValue() ? null : `Debe coincidir con ${otherName}`);
 export const qcode: TextValidator = (v) => (/^C\d{7,8}$/.test(v) ? null : 'Formato inválido, ej: C10010837');
 export const selectRequired = <T,>(val: T | null) => (val ? null : 'Seleccione una opción');
-
+export const cedulaValidator : TextValidator = (v) => (/^\d{10}$/.test(v) ? null : 'Formato inválido, ej: 1701234567' )
 export type NumberValidator = (value: number | null) => string | null;
 export type BoolValidator = (value: boolean) => string | null;
 export const numberRequired: NumberValidator = (v) => (v === null || Number.isNaN(v) ? 'Valor requerido' : null);
