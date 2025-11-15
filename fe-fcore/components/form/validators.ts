@@ -8,6 +8,7 @@ export const hasUpper: TextValidator = (v) => (/[A-Z]/.test(v) ? null : 'Debe in
 export const hasDigit: TextValidator = (v) => (/\d/.test(v) ? null : 'Debe incluir números');
 export const matchField = (otherName: string, otherValue: () => string): TextValidator => (v) => (v === otherValue() ? null : `Debe coincidir con ${otherName}`);
 export const qcode: TextValidator = (v) => (/^C\d{7,8}$/.test(v) ? null : 'Formato inválido, ej: C10010837');
+export const selectRequired = <T,>(val: T | null) => (val ? null : 'Seleccione una opción');
 
 export type NumberValidator = (value: number | null) => string | null;
 export type BoolValidator = (value: boolean) => string | null;

@@ -9,10 +9,10 @@ import { Tag } from 'primereact/tag';
 type FraudTip = { title: string; text: string; img?: string; badge?: string };
 
 const TIPS: FraudTip[] = [
-  { title: 'Regla 3-D Secure', text: 'Autenticación reforzada para e-commerce.', img: '/images/fraud/3ds.jpg', badge: 'Mejor práctica' },
-  { title: 'Límites dinámicos', text: 'Ajusta límites por perfil y horario.', img: '/images/fraud/limits.jpg', badge: 'Riesgo' },
-  { title: 'Velocidad de transacciones', text: 'Bloquea ráfagas por IP/dispositivo.', img: '/images/fraud/velocity.jpg', badge: 'Heurística' },
-  { title: 'Geolocalización', text: 'Cruza país, BIN y MCC.', img: '/images/fraud/geo.jpg', badge: 'Señal' },
+  { title: 'Regla 3-D Secure', text: 'Autenticación reforzada para e-commerce.', img: 'https://webandcrafts.com/_next/image?url=https%3A%2F%2Fadmin.wac.co%2Fuploads%2FWhat_is_E_commerce_and_What_are_its_Applications_2_d2eb0d4402.jpg&w=4500&q=90', badge: 'Mejor práctica' },
+  { title: 'Límites dinámicos', text: 'Ajusta límites por perfil y horario.', img: 'https://img.uxcel.com/cdn-cgi/image/format=auto/tags/user-profile-1707765048805-2x.jpg', badge: 'Riesgo' },
+  { title: 'Velocidad de transacciones', text: 'Bloquea ráfagas por IP/dispositivo.', img: 'https://images.prismic.io//intuzwebsite/ZgOpH8cYqOFdyGp4_UnleashingthePotentialofOpenAI%27sSorainEducation-1-.png?w=2400&q=80&auto=format,compress&fm=png8', badge: 'Heurística' },
+  { title: 'Geolocalización', text: 'Cruza país, BIN y MCC.', img: 'https://tectalic.com/wp-content/uploads/credit-card-100073980.jpg', badge: 'Señal' },
 ];
 
 export default function TipsCarousel() {

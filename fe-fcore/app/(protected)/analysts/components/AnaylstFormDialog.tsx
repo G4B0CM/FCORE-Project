@@ -5,7 +5,7 @@ import FormDialog from '@/components/form/FormDialog';
 import FormInputField from '@/components/form/FormInputField';
 import FormInputPassword from '@/components/form/FormInputPassword';
 import FormSelectField from '@/components/form/FormSelectField';
-import { required, minLen, qcode } from '@/components/form/validators';
+import { required, selectRequired, minLen, qcode } from '@/components/form/validators';
 
 type Props = {
   visible: boolean;
@@ -47,7 +47,7 @@ export default function AnalystFormDialog({ visible, onClose, title, initialValu
           <FormInputField name="lastname" label="Apellido" validators={[required]} />
         </div>
         <div className="col-12 md:col-6">
-          <FormSelectField name="role_id" label="Rol" placeholder="Seleccione un rol" options={(initialValues as any).roleOptions ?? []} validators={[required]} />
+          <FormSelectField name="role_id" label="Rol" placeholder="Seleccione un rol" options={(initialValues as any).roleOptions ?? []} validators={[selectRequired]} />
         </div>
       </div>
     </FormDialog>

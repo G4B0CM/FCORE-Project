@@ -18,6 +18,26 @@ const nextConfig: NextConfig = {
         hostname: 'www.piranirisk.com',
         pathname: '/hs-fs/hubfs/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'tectalic.com',
+        pathname: '/wp-content/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'webandcrafts.com',
+        pathname: '/_next/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'img.uxcel.com',
+        pathname: '/cdn-cgi/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images.prismic.io',
+        pathname: '//intuzwebsite/**',
+      },
     ],
   },
 };
