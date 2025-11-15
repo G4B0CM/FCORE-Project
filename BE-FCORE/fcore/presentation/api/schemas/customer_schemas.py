@@ -4,7 +4,7 @@ from uuid import UUID
 
 class CustomerBase(BaseModel):
     full_name: str = Field(..., min_length=3, max_length=200)
-    document_number: str = Field(..., min_length=5, max_length=50)
+    document_number: str = Field(...,pattern=r"\d{10}", min_length=5, max_length=50)
     segment: Optional[str] = Field(None, max_length=50)
     age: Optional[int] = Field(None, ge=18, le=100)
 
