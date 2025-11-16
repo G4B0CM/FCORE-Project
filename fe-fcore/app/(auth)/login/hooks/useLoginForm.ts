@@ -1,15 +1,12 @@
-// src/app/(auth)/login/hooks/useLoginForm.ts
 'use client';
 
 import { useRef } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 
-export function useLoginForm() {
+export function useLoginForm(redirectTo: string = '/dashboard') {
   const toast = useRef<Toast>(null);
   const router = useRouter();
-  const sp = useSearchParams();
-  const redirectTo = sp.get('redirectTo') || '/dashboard';
 
   async function submit(values: { username: string; password: string }) {
     const { username, password } = values;
@@ -18,11 +15,19 @@ export function useLoginForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password }),
     });
+
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
       throw new Error(data?.detail ?? 'Credenciales inválidas');
     }
-    toast.current?.show({ severity: 'success', summary: 'Bienvenido', detail: username, life: 1200 });
+
+    toast.current?.show({
+      severity: 'success',
+      summary: 'Bienvenido',
+      detail: username,
+      life: 1200,
+    });
+
     setTimeout(() => router.replace(redirectTo), 300);
   }
 

@@ -6,8 +6,14 @@ import { Toast } from 'primereact/toast';
 import { useLoginForm } from '../hooks/useLoginForm';
 import TipsCarousel from './TipsCarousel';
 
-export default function LoginLayout({ children }: { children: React.ReactNode }) {
-  const { toast } = useLoginForm();
+export default function LoginLayout({
+  children,
+  redirectTo,
+}: {
+  children: React.ReactNode;
+  redirectTo: string;
+}) {
+  const { toast } = useLoginForm(redirectTo);
   return (
     <div className="min-h-screen flex flex-column">
       <Toast ref={toast} position="bottom-right" />

@@ -3,7 +3,7 @@
 
 import { cookies, headers } from 'next/headers';
 import { apiClient } from './apiClient';
-import { ACCESS_COOKIE, REFRESH_COOKIE, TOKEN_HEADER } from '@/lib/auth/cookies';
+import { ACCESS_COOKIE, REFRESH_COOKIE, TOKEN_HEADER, cookieOpts } from '@/lib/auth/cookies';
 import type { TokenResponse, TokenPayload } from '@/types/auth';
 
 export async function loginBackend(username: string, password: string): Promise<TokenResponse> {
@@ -15,9 +15,9 @@ export async function loginBackend(username: string, password: string): Promise<
 
 export async function setAuthCookies(tokens: TokenResponse) {
   const cs = await cookies();
-  const common = { httpOnly: true, path: '/', sameSite: 'lax' as const, secure: process.env.NODE_ENV === 'production' };
-  cs.set(ACCESS_COOKIE, tokens.access_token, { ...common });
-  cs.set(REFRESH_COOKIE, tokens.refresh_token, { ...common });
+  const opts = cookieOpts();
+  cs.set(ACCESS_COOKIE, tokens.access_token, opts);
+  cs.set(REFRESH_COOKIE, tokens.refresh_token, opts);
 }
 
 export async function clearAuthCookies() {

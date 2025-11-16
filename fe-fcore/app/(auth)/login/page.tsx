@@ -1,13 +1,17 @@
 // src/app/(auth)/login/page.tsx
-'use client';
-
 import LoginLayout from './components/LoginLayout';
 import LoginForm from './components/LoginForm';
 
-export default function LoginPage() {
+type LoginPageProps = {
+  searchParams: { redirectTo?: string };
+};
+
+export default function LoginPage({ searchParams }: LoginPageProps) {
+  const redirectTo = searchParams.redirectTo || '/dashboard';
+
   return (
-    <LoginLayout>
-      <LoginForm />
+    <LoginLayout redirectTo={redirectTo}>
+      <LoginForm redirectTo={redirectTo} />
     </LoginLayout>
   );
 }

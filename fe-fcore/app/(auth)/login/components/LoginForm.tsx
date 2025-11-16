@@ -8,8 +8,8 @@ import FormSubmitButton from '@/components/form/FormSubmitButton';
 import { required, minLen, qcode } from '@/components/form/validators';
 import { useLoginForm } from '../hooks/useLoginForm';
 
-export default function LoginForm() {
-  const { submit, notifyInvalid, notifyError } = useLoginForm();
+export default function LoginForm({ redirectTo }: { redirectTo: string }) {
+  const { submit, notifyInvalid, notifyError } = useLoginForm(redirectTo);
 
   return (
     <FormProvider initialValues={{ username: '', password: '' }} defaults={{ validateOn: 'both', touchOnMount: true, validateOnMount: true }}>
