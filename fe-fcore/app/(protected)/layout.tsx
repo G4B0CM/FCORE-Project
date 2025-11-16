@@ -1,4 +1,6 @@
 // src/app/(protected)/layout.tsx
+export const dynamic = 'force-dynamic';
+
 import { redirect } from 'next/navigation';
 import { requireAuth } from '@/lib/auth/server';
 import ClientShell from '@/components/layout/ClientShell';
