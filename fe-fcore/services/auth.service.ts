@@ -7,9 +7,11 @@ import { ACCESS_COOKIE, REFRESH_COOKIE, TOKEN_HEADER, cookieOpts } from '@/lib/a
 import type { TokenResponse, TokenPayload } from '@/types/auth';
 
 export async function loginBackend(username: string, password: string): Promise<TokenResponse> {
-  const qs = new URLSearchParams({ username, password }).toString();
-  const path = `/auth/login?${qs}`;
-  const res = await apiClient.post<TokenResponse, undefined>(path, undefined as unknown as undefined, { credentials: 'include' });
+  const res = await apiClient.post<TokenResponse, { username: string; password: string }>(
+    '/auth/login',
+    { username, password },
+    { credentials: 'include' }
+  );
   return res;
 }
 
@@ -37,8 +39,6 @@ export async function validateToken(): Promise<TokenPayload> {
     credentials: 'include',
     cache: 'no-store',
   });
-  if (!res.ok) {
-    throw new Error('Token inválido');
-  }
+  if (!res.ok) throw new Error('Token inválido');
   return (await res.json()) as TokenPayload;
 }
