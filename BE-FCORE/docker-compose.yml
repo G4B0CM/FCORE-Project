@@ -1,0 +1,16 @@
+services:
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    container_name: fcore_db
+    environment:
+      - POSTGRES_USER=fcore_user
+      - POSTGRES_PASSWORD=GaboPassword
+      - POSTGRES_DB=fcore_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - fcore_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  fcore_data:
