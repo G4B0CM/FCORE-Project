@@ -69,7 +69,7 @@ class ScoringUseCase:
             self._alert_repo.create(alert)
 
         # 7. Update and save the behavior profile (the "memory" update)
-        updated_behavior = self._update_behavior(transaction, behavior)
+        updated_behavior = self._update_behavior_from_db(transaction, behavior)
         self._behavior_repo.save(updated_behavior)
 
         return action, {
@@ -89,21 +89,25 @@ class ScoringUseCase:
             "is_new_country": beh.usual_country is not None and tx.country != beh.usual_country
         }
     
-    def _update_behavior(self, tx: Transaction, beh: BehaviorProfile) -> BehaviorProfile:
-        """Updates the behavior profile with the new transaction's data."""
-        # This is a simplified update logic. A real system would use a more
-        # robust streaming aggregation method (e.g., using TimescaleDB continuous aggregates).
-        beh.tx_count_10m += 1
-        beh.tx_count_30m += 1
-        beh.tx_count_24h += 1
+    def _update_behavior_from_db(self, tx: Transaction, beh: BehaviorProfile) -> BehaviorProfile:
+        """
+        Updates the behavior profile by querying the source of truth (TimescaleDB).
+        """
+        # 1. Ask the repository to crunch the numbers
+        stats = self._behavior_repo.calculate_features_from_history(tx.customer_id)
         
-        # Update average amount (simplified moving average)
-        current_total = beh.avg_amount_24h * Decimal(beh.tx_count_24h - 1)
-        new_avg = (current_total + tx.amount) / Decimal(beh.tx_count_24h)
-        beh.avg_amount_24h = new_avg
-
-        if not beh.usual_country:
+        # 2. Update the entity with the calculated values
+        beh.tx_count_10m = stats["tx_count_10m"]
+        beh.tx_count_30m = stats["tx_count_30m"]
+        beh.tx_count_24h = stats["tx_count_24h"]
+        beh.avg_amount_24h = stats["avg_amount_24h"]
+        
+        # Si la consulta de usual_country devolvió algo, lo usamos.
+        if stats["usual_country"]:
+            beh.usual_country = stats["usual_country"]
+        elif not beh.usual_country:
+             # Fallback si es la primera tx y el historial no dio suficiente info
             beh.usual_country = tx.country
-        
+
         beh.updated_at = datetime.utcnow()
         return beh

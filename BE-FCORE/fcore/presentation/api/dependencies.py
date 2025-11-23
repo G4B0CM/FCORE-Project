@@ -54,7 +54,7 @@ DB_NAME = os.getenv("POSTGRES_DB", "fcore_db")
 
 # Cadena de conexión para PostgreSQL
 DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create tables
@@ -64,6 +64,7 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+        db.commit()
     finally:
         db.close()
 
