@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, Float, DateTime, ForeignKey, Enum, ForeignKeyConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from uuid import uuid4
@@ -16,27 +16,36 @@ class AlertModel(Base):
     __tablename__ = 'alerts'
     
     id = Column(UUID_CHAR, primary_key=True, default=uuid4)
-    transaction_id = Column(UUID_CHAR, ForeignKey('transactions.id'), nullable=False, index=True)
+    
+    transaction_id = Column(UUID_CHAR, nullable=False, index=True)
+    transaction_occurred_at = Column(DateTime(timezone=True), nullable=False)
     
     action = Column(Enum(AlertAction), nullable=False)
     ml_score = Column(Float, nullable=True)
     final_score = Column(Float, nullable=True)
-    rule_hits = Column(JSONBType, nullable=True) # JSONB for performance 
+    rule_hits = Column(JSONBType, nullable=True)
     
     created_at = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow)
     created_by = Column(UUID_CHAR, ForeignKey('analysts.id'), nullable=True)
 
-    transaction = relationship("TransactionModel")
+    __table_args__ = (
+        ForeignKeyConstraint(
+            ['transaction_id', 'transaction_occurred_at'],
+            ['transactions.id', 'transactions.occurred_at'],
+        ),
+    )
+
+    transaction = relationship("TransactionModel", foreign_keys=[transaction_id, transaction_occurred_at])
     creator = relationship("AnalystModel")
 
     def to_entity(self) -> Alert:
-        # Enriched fields
         transaction_entity = self.transaction.to_entity() if self.transaction else None
         creator_entity = self.creator.to_entity() if self.creator else None
         
         return Alert(
             id=self.id,
             transaction_id=self.transaction_id,
+            transaction_occurred_at=self.transaction_occurred_at, # Mapear nuevo campo
             action=self.action,
             ml_score=self.ml_score,
             final_score=self.final_score,
