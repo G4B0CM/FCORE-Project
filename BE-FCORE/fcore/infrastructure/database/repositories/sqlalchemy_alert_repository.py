@@ -14,6 +14,7 @@ class SqlAlchemyAlertRepository(IAlertRepository):
         model = AlertModel(
             id=alert.id,
             transaction_id=alert.transaction_id,
+            transaction_occurred_at=alert.transaction_occurred_at, # <-- NUEVO
             action=alert.action,
             ml_score=alert.ml_score,
             final_score=alert.final_score,
@@ -23,7 +24,6 @@ class SqlAlchemyAlertRepository(IAlertRepository):
         )
         self._session.add(model)
         self._session.flush()
-        self._session.commit()
         return self.find_by_id(model.id)
 
     def find_by_id(self, id: UUID) -> Optional[Alert]:

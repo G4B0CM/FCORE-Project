@@ -10,13 +10,14 @@ class TransactionModel(Base):
     __tablename__ = 'transactions'
     
     id = Column(UUID_CHAR, primary_key=True, default=uuid4)
+    occurred_at = Column(DateTime(timezone=True), primary_key=True, nullable=False, default=datetime.datetime.utcnow)
+
     customer_id = Column(UUID_CHAR, ForeignKey('customers.id'), nullable=False, index=True)
     merchant_id = Column(UUID_CHAR, ForeignKey('merchants.id'), nullable=False, index=True)
     
     amount = Column(Numeric(10, 2), nullable=False)
     currency = Column(String(3), nullable=False, default='USD')
     channel = Column(Enum(TransactionChannel), nullable=False)
-    occurred_at = Column(DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow)
     
     device_id = Column(String(255), nullable=True)
     ip_address = Column(String(45), nullable=True)

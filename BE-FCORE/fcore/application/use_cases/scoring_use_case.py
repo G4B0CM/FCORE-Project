@@ -60,6 +60,7 @@ class ScoringUseCase:
         if action in [AlertAction.REVIEW, AlertAction.DECLINE]:
             alert = Alert(
                 transaction_id=transaction.id,
+                transaction_occurred_at=transaction.occurred_at, # <-- Pasamos la fecha aquí
                 action=action,
                 ml_score=ml_score,
                 final_score=final_score,
