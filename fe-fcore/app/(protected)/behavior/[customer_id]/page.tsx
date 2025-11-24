@@ -1,24 +1,13 @@
-// src/app/(protected)/behavior/[customer_id]/page.tsx
-'use client';
+import BehaviorByCustomerClient from '../components/BehaviorByCustomerClient';
 
-import { useEffect, useRef } from 'react';
-import { Toast } from 'primereact/toast';
-import BehaviorProfileCard from '../components/BehaviorProfileCard';
-import { useBehaviorProfile } from '../hooks/useBehaviorProfile';
+type PageProps = {
+  params: Promise<{ customer_id: string }>;
+};
 
-export default function BehaviorByCustomerPage({ params }: { params: { customer_id: string } }) {
-  const toast = useRef<Toast>(null);
-  const { profile, loading, fetchProfile } = useBehaviorProfile(params.customer_id);
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
-  useEffect(() => {
-    fetchProfile().catch((e) => toast.current?.show({ severity: 'error', summary: 'Error', detail: e?.message ?? 'Error', life: 2500 }));
-  }, [fetchProfile]);
-
-  return (
-    <div className="p-3">
-      <Toast ref={toast} position="bottom-right" />
-      {loading && <div className="text-600">Cargando perfil…</div>}
-      {profile && <BehaviorProfileCard data={profile} />}
-    </div>
-  );
+export default async function BehaviorByCustomerPage({ params }: PageProps) {
+  const { customer_id } = await params;
+  return <BehaviorByCustomerClient customerId={customer_id} />;
 }

@@ -3,6 +3,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Toast } from 'primereact/toast';
+import { useRouter } from 'next/navigation';
 import AppButton from '@/components/ui/AppButton';
 import DataTablePro from '@/components/ui/DataTablePro';
 import TagCell from '@/components/ui/TagCell';
@@ -12,6 +13,7 @@ import { useCustomers } from '../hooks/useCustomers';
 
 export default function CustomersTable() {
   const toast = useRef<Toast>(null);
+  const router = useRouter();
   const { rows, loading, fetchAll, create, update, remove } = useCustomers();
   const [openCreate, setOpenCreate] = useState(false);
   const [openEdit, setOpenEdit] = useState<{ open: boolean; row: any | null }>({ open: false, row: null });
@@ -32,14 +34,15 @@ export default function CustomersTable() {
         header: 'Acciones',
         body: (r: any) => (
           <div className="flex gap-2">
+            <AppButton label="Comportamiento" icon="pi pi-chart-bar" size="small" severity="help" onClick={() => router.push(`/behavior/${r.id}`)} />
             <AppButton label="Editar" icon="pi pi-pencil" size="small" onClick={() => setOpenEdit({ open: true, row: r })} />
             <AppButton label="Eliminar" icon="pi pi-trash" size="small" severity="danger" isOutlined onClick={() => onDelete(r)} />
           </div>
         ),
-        style: { width: '16rem' },
+        style: { width: '26rem' },
       },
     ],
-    []
+    [router]
   );
 
   async function onCreateValid(values: Record<string, unknown>) {
