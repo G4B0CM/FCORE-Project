@@ -31,20 +31,20 @@ type Row = {
 const CHANNELS = ['POS', 'ECOM', 'ATM', 'P2P'];
 
 const VARS: { label: string; value: string; type: VarType; enumValues?: string[] }[] = [
-  { label: 'amount', value: 'amount', type: 'number' },
-  { label: 'currency', value: 'currency', type: 'string' },
-  { label: 'country', value: 'country', type: 'string' },
-  { label: 'ip_address', value: 'ip_address', type: 'string' },
-  { label: 'device_id', value: 'device_id', type: 'string' },
-  { label: 'channel', value: 'channel', type: 'enum', enumValues: CHANNELS },
-  { label: 'tx_count_10m', value: 'tx_count_10m', type: 'number' },
-  { label: 'tx_count_30m', value: 'tx_count_30m', type: 'number' },
-  { label: 'tx_count_24h', value: 'tx_count_24h', type: 'number' },
-  { label: 'avg_amount_24h', value: 'avg_amount_24h', type: 'number' },
-  { label: 'usual_country', value: 'usual_country', type: 'string' },
-  { label: 'usual_ip', value: 'usual_ip', type: 'string' },
-  { label: 'is_foreign_transaction', value: 'is_foreign_transaction', type: 'boolean' },
-  { label: 'amount_ratio_vs_avg', value: 'amount_ratio_vs_avg', type: 'number' },
+  { label: 'Monto', value: 'amount', type: 'number' },
+  { label: 'Moneda', value: 'currency', type: 'string' },
+  { label: 'País', value: 'country', type: 'string' },
+  { label: 'Dirección IP', value: 'ip_address', type: 'string' },
+  { label: 'Id dispositivo', value: 'device_id', type: 'string' },
+  { label: 'Canal', value: 'channel', type: 'enum', enumValues: CHANNELS },
+  { label: 'TRX en 10m', value: 'tx_count_10m', type: 'number' },
+  { label: 'TRX en 30m', value: 'tx_count_30m', type: 'number' },
+  { label: 'TRX en 24h', value: 'tx_count_24h', type: 'number' },
+  { label: 'Promedio en 24h', value: 'avg_amount_24h', type: 'number' },
+  { label: 'País Común', value: 'usual_country', type: 'string' },
+  { label: 'IP Común', value: 'usual_ip', type: 'string' },
+  { label: 'Transacción extrangera', value: 'is_foreign_transaction', type: 'boolean' },
+  { label: 'Ratio de monto vs promedio', value: 'amount_ratio_vs_avg', type: 'number' },
 ];
 
 const OPS_BY_TYPE: Record<VarType, { label: string; value: string }[]> = {
@@ -55,7 +55,7 @@ const OPS_BY_TYPE: Record<VarType, { label: string; value: string }[]> = {
     { label: '<=', value: '<=' },
     { label: '==', value: '==' },
     { label: '!=', value: '!=' },
-    { label: 'between', value: 'between' },
+    { label: 'entre', value: 'between' },
   ],
   string: [
     { label: '==', value: '==' },

@@ -1,4 +1,3 @@
-// src/app/(protected)/rules/components/RuleFormDialog.tsx
 'use client';
 
 import { useState } from 'react';
@@ -54,27 +53,25 @@ export default function RuleFormDialog({ visible, onClose, title, initialValues,
             <h3 className="m-0 text-lg">Asistente de condiciones</h3>
             <div className="flex align-items-center gap-2">
               <span className="text-600 text-sm">Usar asistente</span>
-              <SwitchField
-                checked={useWizard}
-                onCheckedChange={setUseWizard}
-                label=""
-              />
+              <SwitchField checked={useWizard} onCheckedChange={setUseWizard} label="" />
             </div>
           </div>
+
           {useWizard && <RuleDslBuilder />}
         </div>
 
-        <div className="col-12">
-          <FormTextAreaField
-            name="dsl_expression"
-            label="Expresión (DSL)"
-            autoResize
-            rows={5}
-            validators={[required, minLen(10)]}
-            className="w-full"
-            disabled={useWizard}
-          />
-        </div>
+        {!useWizard && (
+          <div className="col-12">
+            <FormTextAreaField
+              name="dsl_expression"
+              label="Expresión (DSL)"
+              autoResize
+              rows={5}
+              validators={[required, minLen(10)]}
+              className="w-full"
+            />
+          </div>
+        )}
 
         <div className="col-12 md:col-6">
           <FormSelectField name="severity" label="Severidad" options={SEVERITY_OPTIONS} validators={[selectRequired]} />
