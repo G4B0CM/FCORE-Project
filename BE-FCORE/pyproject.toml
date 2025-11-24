@@ -12,7 +12,9 @@ dependencies = [
     "passlib[bcrypt]",
     "python-multipart",
     "sqlalchemy",
-    "pydantic-settings"
+    "pydantic-settings",
+    "psycopg2-binary",
+    "simpleeval"
 ]
 
 [tool.setuptools.packages.find]

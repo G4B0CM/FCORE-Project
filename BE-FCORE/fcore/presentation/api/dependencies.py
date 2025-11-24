@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -41,10 +43,18 @@ from ...application.use_cases.crud_role_use_case import CrudRoleUseCase
 from ...core.entities.analyst import Analyst
 from .schemas.token_schemas import TokenData, TokenPayload
 
+load_dotenv()
 
 # --- Database Setup ---
-DATABASE_URL = "sqlite:///./test.db" # Example with SQLite
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+DB_USER = os.getenv("POSTGRES_USER", "fcore_user")
+DB_PASSWORD = os.getenv("POSTGRES_PASSWORD", "fcore_password")
+DB_HOST = os.getenv("POSTGRES_HOST", "localhost")
+DB_PORT = os.getenv("POSTGRES_PORT", "5432")
+DB_NAME = os.getenv("POSTGRES_DB", "fcore_db")
+
+# Cadena de conexión para PostgreSQL
+DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Create tables
@@ -54,6 +64,7 @@ def get_db():
     db = SessionLocal()
     try:
         yield db
+        db.commit()
     finally:
         db.close()
 

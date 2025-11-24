@@ -20,6 +20,7 @@ class Alert:
     Represents an alert generated for a suspicious transaction.
     """
     transaction_id: UUID
+    transaction_occurred_at: datetime
     action: AlertAction
     ml_score: Optional[float] = None
     final_score: Optional[float] = None
