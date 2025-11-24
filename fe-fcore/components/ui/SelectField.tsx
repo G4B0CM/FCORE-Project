@@ -10,7 +10,7 @@ type ValidateOn = 'blur' | 'change' | 'both';
 export type SelectFieldProps<T> = {
     id?: string;
     name?: string;
-    label: string;
+    label?: string;
     value: T | null;
     onValueChange: (value: T | null) => void;
     options: T[];
