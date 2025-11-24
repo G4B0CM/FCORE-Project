@@ -13,7 +13,8 @@ dependencies = [
     "python-multipart",
     "sqlalchemy",
     "pydantic-settings",
-    "psycopg2-binary"
+    "psycopg2-binary",
+    "simpleeval"
 ]
 
 [tool.setuptools.packages.find]

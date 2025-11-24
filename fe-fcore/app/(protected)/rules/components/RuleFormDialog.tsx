@@ -44,14 +44,14 @@ export default function RuleFormDialog({ visible, onClose, title, initialValues,
           <FormInputField name="name" label="Nombre" validators={[required, minLen(5)]} />
         </div>
         <div className="col-12">
-          <FormTextAreaField name="dsl_expression" label="Expresión (DSL)" autoResize rows={5} validators={[required, minLen(10)]} />
+          <FormTextAreaField name="dsl_expression" label="Expresión (DSL)" autoResize rows={5} validators={[required, minLen(10)]} className="w-full"/>
         </div>
         <div className="col-12 md:col-6">
           <FormSelectField name="severity" label="Severidad" options={SEVERITY_OPTIONS} validators={[selectRequired]} />
         </div>
         {'enabled' in initialValues && (
           <div className="col-12 md:col-3">
-            <FormSwitchField name="enabled" label="Activa" />
+            <FormSwitchField name="enabled" label="Activa" className="w-full"/>
           </div>
         )}
       </div>

@@ -1,17 +1,19 @@
 from typing import List, Dict, Any
+import logging
+from simpleeval import SimpleEval, NameNotDefined
+
 from ...core.entities.rule import Rule
 from ...core.entities.transaction import Transaction
 from ...core.entities.behavior_profile import BehaviorProfile
 
-# RuleHit es una forma de registrar qué regla se activó.
-# Podríamos usar un dataclass para hacerlo más robusto en el futuro.
+# Configurar logger para ver qué pasa con las reglas
+logger = logging.getLogger(__name__)
+
 RuleHit = Dict[str, Any]
 
 class RuleEngine:
     """
-    A simple, secure rule engine to evaluate transactions.
-    This is a basic implementation. A real-world engine would use a proper parser
-    for the DSL (e.g., using libraries like Lark or implementing a parser).
+    A secure rule engine that evaluates DSL expressions using simpleeval.
     """
 
     def __init__(self, rules: List[Rule]):
@@ -25,30 +27,59 @@ class RuleEngine:
         Evaluates the transaction and behavior profile against all loaded rules.
         """
         hits: List[RuleHit] = []
-        
-        # --- STUB IMPLEMENTATION ---
-        # This is a very basic simulation. A real engine would parse the DSL.
-        # We simulate hits based on keywords in the rule name for this demo.
-        
-        for rule in self._rules:
-            triggered = False
-            # Example 1: High amount rule
-            if "high amount" in rule.name.lower() and transaction.amount > 2000:
-                triggered = True
-            
-            # Example 2: Velocity rule
-            if "velocity" in rule.name.lower() and behavior.tx_count_10m >= 4:
-                triggered = True
 
-            # Example 3: Unusual country
-            if "unusual country" in rule.name.lower() and behavior.usual_country and transaction.country != behavior.usual_country:
-                triggered = True
+        # 1. Construir el "Contexto" (Variables disponibles para el DSL)
+        # Aplanamos los objetos para que en el DSL se use "amount" en lugar de "transaction.amount"
+        context = self._build_context(transaction, behavior)
+
+        # 2. Inicializar el evaluador seguro
+        evaluator = SimpleEval(names=context)
+
+        # 3. Evaluar cada regla
+        for rule in self._rules:
+            try:
+                # El DSL debe retornar un booleano (True/False)
+                is_triggered = evaluator.eval(rule.dsl_expression)
+                
+                if is_triggered:
+                    logger.info(f"Rule triggered: {rule.name}")
+                    hits.append({
+                        "rule_id": str(rule.id),
+                        "rule_name": rule.name,
+                        "dsl_expression": rule.dsl_expression,
+                        "severity": rule.severity.value
+                    })
             
-            if triggered:
-                hits.append({
-                    "rule_id": str(rule.id),
-                    "rule_name": rule.name,
-                    "severity": rule.severity.value
-                })
+            except (SyntaxError, NameNotDefined, Exception) as e:
+                # Si una regla está mal escrita, no rompemos todo el proceso, solo la logueamos
+                logger.error(f"Error evaluating rule '{rule.name}' (DSL: {rule.dsl_expression}): {str(e)}")
+                continue
 
         return hits
+
+    def _build_context(self, tx: Transaction, beh: BehaviorProfile) -> Dict[str, Any]:
+        """
+        Maps entity attributes to a flat dictionary for the DSL.
+        """
+        return {
+            # --- Transaction Attributes ---
+            "amount": float(tx.amount),
+            "currency": tx.currency,
+            "country": tx.country,
+            "ip_address": tx.ip_address,
+            "device_id": tx.device_id,
+            "channel": tx.channel.value if tx.channel else None,
+            
+            # --- Behavior Attributes ---
+            "tx_count_10m": beh.tx_count_10m,
+            "tx_count_30m": beh.tx_count_30m,
+            "tx_count_24h": beh.tx_count_24h,
+            "avg_amount_24h": float(beh.avg_amount_24h),
+            "usual_country": beh.usual_country,
+            "usual_ip": beh.usual_ip,
+            
+            # --- Helper / Derived Logic (Optional) ---
+            # Podemos inyectar lógica pre-calculada útil
+            "is_foreign_transaction": tx.country != beh.usual_country if (tx.country and beh.usual_country) else False,
+            "amount_ratio_vs_avg": (float(tx.amount) / float(beh.avg_amount_24h)) if beh.avg_amount_24h > 0 else 1.0
+        }
