@@ -1,6 +1,7 @@
-// src/app/(auth)/login/components/LoginForm.tsx
 'use client';
 
+import { RefObject } from 'react';
+import { Toast } from 'primereact/toast';
 import { FormProvider } from '@/components/form/FormProvider';
 import FormInputField from '@/components/form/FormInputField';
 import FormInputPassword from '@/components/form/FormInputPassword';
@@ -8,14 +9,32 @@ import FormSubmitButton from '@/components/form/FormSubmitButton';
 import { required, minLen, qcode } from '@/components/form/validators';
 import { useLoginForm } from '../hooks/useLoginForm';
 
-export default function LoginForm({ redirectTo }: { redirectTo: string }) {
-  const { submit, notifyInvalid, notifyError } = useLoginForm(redirectTo);
+export default function LoginForm({ redirectTo, toastRef }: { redirectTo: string; toastRef?: RefObject<Toast> }) {
+  const { submit, notifyInvalid, notifyError } = useLoginForm(redirectTo, toastRef);
 
   return (
-    <FormProvider initialValues={{ username: '', password: '' }} defaults={{ validateOn: 'both', touchOnMount: true, validateOnMount: true }}>
+    <FormProvider
+      initialValues={{ username: '', password: '' }}
+      defaults={{ validateOn: 'blur', touchOnMount: false, validateOnMount: false }}
+    >
       <form className="flex flex-column gap-4" onSubmit={(e) => e.preventDefault()} aria-label="Formulario de acceso antifraude">
-        <FormInputField name="username" label="Usuario" placeholder="e.g. C10010837" autoComplete="username" validators={[required, qcode]} initiallyTouched={false} validateOnMount />
-        <FormInputPassword name="password" label="Contraseña" toggleMask feedback={false} autoComplete="current-password" validators={[required, minLen(3)]} initiallyTouched={false} validateOnMount />
+        <FormInputField
+          name="username"
+          label="Usuario"
+          placeholder="e.g. C10010837"
+          autoComplete="username"
+          validators={[required, qcode]}
+          initiallyTouched={false}
+        />
+        <FormInputPassword
+          name="password"
+          label="Contraseña"
+          toggleMask
+          feedback={false}
+          autoComplete="current-password"
+          validators={[required, minLen(3)]}
+          initiallyTouched={false}
+        />
         <FormSubmitButton
           label="Entrar"
           icon="pi pi-sign-in"

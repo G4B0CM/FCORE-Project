@@ -1,12 +1,13 @@
 'use client';
 
-import { useRef } from 'react';
+import { RefObject, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Toast } from 'primereact/toast';
 
-export function useLoginForm(redirectTo: string = '/dashboard') {
-  const toast = useRef<Toast>(null);
+export function useLoginForm(redirectTo: string = '/dashboard', extToast?: RefObject<Toast>) {
   const router = useRouter();
+  const internal = useRef<Toast>(null);
+  const toast = extToast ?? internal;
 
   async function submit(values: { username: string; password: string }) {
     const { username, password } = values;
