@@ -34,6 +34,7 @@ export default function LoginForm({ redirectTo, toastRef }: { redirectTo: string
           autoComplete="current-password"
           validators={[required, minLen(3)]}
           initiallyTouched={false}
+          className='w-23rem'
         />
         <FormSubmitButton
           label="Entrar"

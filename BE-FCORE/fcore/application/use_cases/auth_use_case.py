@@ -18,10 +18,10 @@ class AuthUseCase:
     def login(self, code: str, password: str) -> tuple[str, str]:
         analyst = self._analyst_repo.find_by_code(code)
         if not analyst or not self._password_hasher.verify(password, analyst.password_hash):
-            raise InvalidCredentialsError("Analyst code or password incorrect.")
+            raise InvalidCredentialsError("Usuario o contraseña del analista inválidas.")
         
         if not analyst.is_active:
-            raise InvalidCredentialsError("Analyst account is inactive.")
+            raise InvalidCredentialsError(f"La cuenta del analista {code} está inactiva")
             
         access_token, refresh_token = self._token_service.create_tokens(
             user_code=analyst.code,
