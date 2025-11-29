@@ -7,7 +7,7 @@ import FormDialog from '@/components/form/FormDialog';
 import FormInputField from '@/components/form/FormInputField';
 import FormNumberField from '@/components/form/FormNumberField';
 import FormSelectField from '@/components/form/FormSelectField';
-import { numberBetween, numberRequired, selectRequired, eqLen } from '@/components/form/validators';
+import { numberBetween, numberRequired, selectRequired, eqLenIfFilled } from '@/components/form/validators';
 import TagCell from '@/components/ui/TagCell';
 import { useScoring } from '../hooks/useScoring';
 
@@ -24,6 +24,7 @@ type Props = {
 export default function ScoringPlayground({ customerOptions, merchantOptions }: Props) {
   const toast = useRef<Toast>(null);
   const { loading, result, score, setResult } = useScoring();
+  const [submittedOnce, setSubmittedOnce] = useState(false);
   const [open, setOpen] = useState(true);
 
   return (
@@ -92,20 +93,24 @@ export default function ScoringPlayground({ customerOptions, merchantOptions }: 
               toast.current?.show({ severity: 'error', summary: 'Error', detail: e?.message ?? 'Error', life: 2400 });
             }
           }}
-          onInvalid={() => {}}
+          onInvalid={(errors) => {
+            const first = Object.values(errors || {}).find(Boolean) as string | null;
+            toast.current?.show({ severity: 'warn', summary: 'Revisa el formulario', detail: first ?? 'Campos requeridos', life: 2400 });
+            setSubmittedOnce(true);
+          }}
         >
           <div className="grid pt-2 gap-3">
             <p className='mb-20 text-gray-600'>Obligatorios</p>
             <div className="col-12 md:col-6 w-full">
-              <FormSelectField name="customer_id" label="Cliente" initiallyTouched options={customerOptions} validators={[selectRequired]} />
+              <FormSelectField name="customer_id" label="Cliente" initiallyTouched={submittedOnce} options={customerOptions} validators={[selectRequired]} />
             </div>
             <div className="col-12 md:col-6 w-full">
-              <FormSelectField name="merchant_id" label="Comercio" initiallyTouched options={merchantOptions} validators={[selectRequired]} />
+              <FormSelectField name="merchant_id" label="Comercio" initiallyTouched={submittedOnce} options={merchantOptions} validators={[selectRequired]} />
             </div>
             <div className="col-12 md:col-6 w-full">
               <div className="flex gap-2 min-w-0">
                 <div className="flex-1 min-w-0">
-                  <FormNumberField className="w-full" name="amount" label="Monto" validators={[numberRequired, numberBetween(0.01, 99999999)]} />
+                  <FormNumberField className="w-full" name="amount" label="Monto" initiallyTouched={submittedOnce} validators={[numberRequired, numberBetween(0.01, 99999999)]} />
                 </div>
                 <div className="flex-1 min-w-0">
                   <FormSelectField
@@ -115,6 +120,7 @@ export default function ScoringPlayground({ customerOptions, merchantOptions }: 
                     validators={[selectRequired]}
                     className="w-full"
                     containerClassName="w-full"
+                    initiallyTouched={submittedOnce}
                   />
                 </div>
               </div>
@@ -129,7 +135,7 @@ export default function ScoringPlayground({ customerOptions, merchantOptions }: 
                   <FormInputField name="ip_address" label="IP" />
                 </div>
                 <div className="flex-1">
-                  <FormInputField name="country" label="País (ISO2)" validators={[eqLen(2)]} />
+                  <FormInputField  name="country" label="País (ISO2)" validators={[eqLenIfFilled(2)]} />
                 </div>
               </div>
             </div>
