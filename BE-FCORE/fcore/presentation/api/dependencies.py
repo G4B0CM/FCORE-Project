@@ -30,6 +30,7 @@ from ...application.use_cases.transaction_use_case import TransactionUseCases
 from ...application.use_cases.crud_merchant_use_case import CrudMerchantUseCase
 from ...application.use_cases.crud_customer_use_case import CrudCustomerUseCase
 from ...application.interfaces.i_analyst_repository import IAnalystRepository
+from ...application.interfaces.i_case_repository import ICaseRepository
 from ...application.interfaces.i_model_scorer import IModelScorer
 from ...application.interfaces.i_rule_repository import IRuleRepository
 from ...application.interfaces.i_behavior_repository import IBehaviorRepository
@@ -167,6 +168,8 @@ def get_scoring_use_case(
     behavior_repo: IBehaviorRepository = Depends(get_behavior_repo),
     rule_repo: IRuleRepository = Depends(get_rule_repo),
     alert_repo: IAlertRepository = Depends(get_alert_repo),
+    case_repo: ICaseRepository = Depends(get_case_repo),
+    analyst_repo: IAnalystRepository = Depends(get_analyst_repo),
     scorer: IModelScorer = Depends(get_model_scorer),
     decision_service: DecisionService = Depends(get_decision_service)
 ):
@@ -175,6 +178,8 @@ def get_scoring_use_case(
         behavior_repo=behavior_repo,
         rule_repo=rule_repo,
         alert_repo=alert_repo,
+        case_repo=case_repo,
+        analyst_repo=analyst_repo,
         scorer=scorer,
         decision_service=decision_service
     )
