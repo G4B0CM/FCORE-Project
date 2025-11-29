@@ -20,7 +20,6 @@ class DecisionService:
                 return AlertAction.DECLINE, 1.0
 
         # --- Policy 2: Boost score based on rule hits ---
-        # High severity hits have a higher impact on the final score
         score_boost = 0
         for hit in rule_hits:
             if hit.get("severity") == "high":

@@ -93,20 +93,16 @@ class ScoringUseCase:
         """
         Updates the behavior profile by querying the source of truth (TimescaleDB).
         """
-        # 1. Ask the repository to crunch the numbers
         stats = self._behavior_repo.calculate_features_from_history(tx.customer_id)
         
-        # 2. Update the entity with the calculated values
         beh.tx_count_10m = stats["tx_count_10m"]
         beh.tx_count_30m = stats["tx_count_30m"]
         beh.tx_count_24h = stats["tx_count_24h"]
         beh.avg_amount_24h = stats["avg_amount_24h"]
-        
-        # Si la consulta de usual_country devolvió algo, lo usamos.
+
         if stats["usual_country"]:
             beh.usual_country = stats["usual_country"]
         elif not beh.usual_country:
-             # Fallback si es la primera tx y el historial no dio suficiente info
             beh.usual_country = tx.country
 
         beh.updated_at = datetime.utcnow()

@@ -28,17 +28,12 @@ class RuleEngine:
         """
         hits: List[RuleHit] = []
 
-        # 1. Construir el "Contexto" (Variables disponibles para el DSL)
-        # Aplanamos los objetos para que en el DSL se use "amount" en lugar de "transaction.amount"
         context = self._build_context(transaction, behavior)
 
-        # 2. Inicializar el evaluador seguro
         evaluator = SimpleEval(names=context)
 
-        # 3. Evaluar cada regla
         for rule in self._rules:
             try:
-                # El DSL debe retornar un booleano (True/False)
                 is_triggered = evaluator.eval(rule.dsl_expression)
                 
                 if is_triggered:
@@ -51,7 +46,6 @@ class RuleEngine:
                     })
             
             except (SyntaxError, NameNotDefined, Exception) as e:
-                # Si una regla está mal escrita, no rompemos todo el proceso, solo la logueamos
                 logger.error(f"Error evaluating rule '{rule.name}' (DSL: {rule.dsl_expression}): {str(e)}")
                 continue
 
@@ -79,7 +73,6 @@ class RuleEngine:
             "usual_ip": beh.usual_ip,
             
             # --- Helper / Derived Logic (Optional) ---
-            # Podemos inyectar lógica pre-calculada útil
             "is_foreign_transaction": tx.country != beh.usual_country if (tx.country and beh.usual_country) else False,
             "amount_ratio_vs_avg": (float(tx.amount) / float(beh.avg_amount_24h)) if beh.avg_amount_24h > 0 else 1.0
         }

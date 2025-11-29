@@ -31,14 +31,12 @@ class TransactionUseCases:
         customer_id = data.get('customer_id')
         merchant_id = data.get('merchant_id')
 
-        # 1. Validate existence of related entities
         if not self._customer_repository.find_by_id(customer_id):
             raise CustomerNotFoundError(f"Customer with ID {customer_id} not found.")
         
         if not self._merchant_repository.find_by_id(merchant_id):
             raise MerchantNotFoundError(f"Merchant with ID {merchant_id} not found.")
 
-        # 2. Create the entity
         transaction_entity = Transaction(
             customer_id=customer_id,
             merchant_id=merchant_id,
@@ -48,8 +46,7 @@ class TransactionUseCases:
             ip_address=data.get('ip_address'),
             country=data.get('country')
         )
-        
-        # 3. Persist the entity
+
         return self._transaction_repository.create(transaction_entity)
 
     def get_transaction_by_id(self, id: UUID) -> Transaction:
