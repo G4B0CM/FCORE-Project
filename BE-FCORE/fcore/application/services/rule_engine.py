@@ -74,5 +74,7 @@ class RuleEngine:
             
             # --- Helper / Derived Logic (Optional) ---
             "is_foreign_transaction": tx.country != beh.usual_country if (tx.country and beh.usual_country) else False,
-            "amount_ratio_vs_avg": (float(tx.amount) / float(beh.avg_amount_24h)) if beh.avg_amount_24h > 0 else 1.0
+            "amount_ratio_vs_avg": (float(tx.amount) / float(beh.avg_amount_24h)) if beh.avg_amount_24h > 0 else 1.0,
+            "is_blacklisted_merchant": tx.merchant.is_blacklisted if tx.merchant else False,
+            "is_whitelisted_merchant": tx.merchant.is_whitelisted if tx.merchant else False
         }
