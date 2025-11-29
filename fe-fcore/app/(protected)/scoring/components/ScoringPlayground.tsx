@@ -7,15 +7,13 @@ import FormDialog from '@/components/form/FormDialog';
 import FormInputField from '@/components/form/FormInputField';
 import FormNumberField from '@/components/form/FormNumberField';
 import FormSelectField from '@/components/form/FormSelectField';
-import { required, numberBetween, numberRequired, selectRequired } from '@/components/form/validators';
+import { numberBetween, numberRequired, selectRequired, eqLen } from '@/components/form/validators';
 import TagCell from '@/components/ui/TagCell';
 import { useScoring } from '../hooks/useScoring';
 
 const CHANNEL_OPTIONS = [
   { label: 'POS', value: 'POS' },
-  { label: 'ECOM', value: 'ECOM' },
-  { label: 'ATM', value: 'ATM' },
-  { label: 'P2P', value: 'P2P' },
+  { label: 'ECOM', value: 'ECOM' }
 ];
 
 type Props = {
@@ -96,27 +94,44 @@ export default function ScoringPlayground({ customerOptions, merchantOptions }: 
           }}
           onInvalid={() => {}}
         >
-          <div className="grid pt-2 gap-4">
-            <div className="col-12 md:col-6">
-              <FormSelectField name="customer_id" label="Cliente" options={customerOptions} validators={[selectRequired]} />
+          <div className="grid pt-2 gap-3">
+            <p className='mb-20 text-gray-600'>Obligatorios</p>
+            <div className="col-12 md:col-6 w-full">
+              <FormSelectField name="customer_id" label="Cliente" initiallyTouched options={customerOptions} validators={[selectRequired]} />
             </div>
-            <div className="col-12 md:col-6">
-              <FormSelectField name="merchant_id" label="Comercio" options={merchantOptions} validators={[selectRequired]} />
+            <div className="col-12 md:col-6 w-full">
+              <FormSelectField name="merchant_id" label="Comercio" initiallyTouched options={merchantOptions} validators={[selectRequired]} />
             </div>
-            <div className="col-12 md:col-6">
-              <FormNumberField name="amount" label="Monto" validators={[numberRequired, numberBetween(0.01, 99999999)]} />
+            <div className="col-12 md:col-6 w-full">
+              <div className="flex gap-2 min-w-0">
+                <div className="flex-1 min-w-0">
+                  <FormNumberField className="w-full" name="amount" label="Monto" validators={[numberRequired, numberBetween(0.01, 99999999)]} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <FormSelectField
+                    name="channel"
+                    label="Canal"
+                    options={CHANNEL_OPTIONS}
+                    validators={[selectRequired]}
+                    className="w-full"
+                    containerClassName="w-full"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="col-12 md:col-6">
-              <FormSelectField name="channel" label="Canal" options={CHANNEL_OPTIONS} validators={[selectRequired]} />
-            </div>
-            <div className="col-12 md:col-6">
-              <FormInputField name="device_id" label="Device ID" />
-            </div>
-            <div className="col-12 md:col-6">
-              <FormInputField name="ip_address" label="IP" />
-            </div>
-            <div className="col-12 md:col-6">
-              <FormInputField name="country" label="País (ISO2)" />
+            <p className='mb-20 text-gray-600'>Opcionales</p>
+            <div className="col-12 md:col-6 w-full">
+              <div className="flex gap-2 min-w-0">
+                <div className="flex-1">
+                  <FormInputField name="device_id" label="Device ID" />
+                </div>
+                <div className="flex-1 ">
+                  <FormInputField name="ip_address" label="IP" />
+                </div>
+                <div className="flex-1">
+                  <FormInputField name="country" label="País (ISO2)" validators={[eqLen(2)]} />
+                </div>
+              </div>
             </div>
           </div>
         </FormDialog>

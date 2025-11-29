@@ -6,10 +6,9 @@ import FormSelectField from '@/components/form/FormSelectField';
 import { required, selectRequired } from '@/components/form/validators';
 
 const DECISIONS = [
-  { label: 'APPROVED', value: 'APPROVED' },
-  { label: 'DECLINED', value: 'DECLINED' },
-  { label: 'NEED_MORE_INFO', value: 'NEED_MORE_INFO' },
-  { label: 'FALSE_POSITIVE', value: 'FALSE_POSITIVE' },
+  { label: 'Pendiente', value: 'PENDING' },
+  { label: 'Fraude Confirmado', value: 'CONFIRMED_FRAUD' },
+  { label: 'Falso Positivo', value: 'FALSE_POSITIVE' },
 ];
 
 type Props = {

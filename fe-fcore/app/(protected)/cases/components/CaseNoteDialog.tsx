@@ -28,7 +28,7 @@ export default function CaseNoteDialog({ visible, onClose, onValid }: Props) {
     >
       <div className="grid pt-2 gap-4">
         <div className="col-12">
-          <FormTextAreaField name="note" label="Nota" autoResize rows={4} validators={[required, minLen(5)]} />
+          <FormTextAreaField name="note" label="Nota" className='w-full' autoResize rows={4} validators={[required, minLen(5)]} />
         </div>
       </div>
     </FormDialog>

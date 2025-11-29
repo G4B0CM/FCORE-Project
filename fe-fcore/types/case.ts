@@ -1,5 +1,5 @@
 // src/types/case.ts
-export type CaseDecision = 'APPROVED' | 'DECLINED' | 'NEED_MORE_INFO' | 'FALSE_POSITIVE';
+export type CaseDecision = 'PENDING' | 'CONFIRMED_FRAUD' | 'FALSE_POSITIVE';
 export type CaseResponse = {
   id: string;
   decision: CaseDecision;

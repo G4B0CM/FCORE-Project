@@ -2,6 +2,7 @@
 export type TextValidator = (value: string) => string | null;
 export const required: TextValidator = (v) => (v.trim() === '' ? 'Este campo es obligatorio' : null);
 export const minLen = (n: number): TextValidator => (v) => (v.length < n ? `Mínimo ${n} caracteres` : null);
+export const eqLen = (n:number) : TextValidator => (v) => (v.length !== n ? `El texto debe contener exactamente ${n} caracteres`:null )
 export const email: TextValidator = (v) => (/.+@.+\..+/.test(v) ? null : 'Email inválido');
 export const hasLower: TextValidator = (v) => (/[a-z]/.test(v) ? null : 'Debe incluir minúsculas');
 export const hasUpper: TextValidator = (v) => (/[A-Z]/.test(v) ? null : 'Debe incluir mayúsculas');
