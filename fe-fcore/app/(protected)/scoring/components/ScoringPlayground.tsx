@@ -1,4 +1,3 @@
-// src/app/(protected)/scoring/components/ScoringPlayground.tsx
 'use client';
 
 import { useRef, useState } from 'react';
@@ -8,7 +7,7 @@ import FormDialog from '@/components/form/FormDialog';
 import FormInputField from '@/components/form/FormInputField';
 import FormNumberField from '@/components/form/FormNumberField';
 import FormSelectField from '@/components/form/FormSelectField';
-import { required, numberBetween, minLen, selectRequired } from '@/components/form/validators';
+import { required, numberBetween, numberRequired, selectRequired } from '@/components/form/validators';
 import TagCell from '@/components/ui/TagCell';
 import { useScoring } from '../hooks/useScoring';
 
@@ -19,7 +18,12 @@ const CHANNEL_OPTIONS = [
   { label: 'P2P', value: 'P2P' },
 ];
 
-export default function ScoringPlayground() {
+type Props = {
+  customerOptions: { label: string; value: string }[];
+  merchantOptions: { label: string; value: string }[];
+};
+
+export default function ScoringPlayground({ customerOptions, merchantOptions }: Props) {
   const toast = useRef<Toast>(null);
   const { loading, result, score, setResult } = useScoring();
   const [open, setOpen] = useState(true);
@@ -68,8 +72,8 @@ export default function ScoringPlayground() {
           visible={open}
           onClose={() => setOpen(false)}
           title="Probar transacción"
-          initialValues={{ customer_id: '', merchant_id: '', amount: 0, channel: '', device_id: '', ip_address: '', country: '' }}
-          defaults={{ validateOn: 'both', touchOnMount: true, validateOnMount: true }}
+          initialValues={{ customer_id: '', merchant_id: '', amount: null, channel: '', device_id: '', ip_address: '', country: '' }}
+          defaults={{ validateOn: 'change', touchOnMount: false, validateOnMount: false }}
           submitLabel="Score"
           submitIcon="pi pi-bolt"
           submitSeverity="primary"
@@ -94,13 +98,13 @@ export default function ScoringPlayground() {
         >
           <div className="grid pt-2 gap-4">
             <div className="col-12 md:col-6">
-              <FormInputField name="customer_id" label="Customer ID" validators={[required, minLen(8)]} />
+              <FormSelectField name="customer_id" label="Cliente" options={customerOptions} validators={[selectRequired]} />
             </div>
             <div className="col-12 md:col-6">
-              <FormInputField name="merchant_id" label="Merchant ID" validators={[required, minLen(8)]} />
+              <FormSelectField name="merchant_id" label="Comercio" options={merchantOptions} validators={[selectRequired]} />
             </div>
             <div className="col-12 md:col-6">
-              <FormNumberField name="amount" label="Monto" validators={[numberBetween(0.01 as any, 99999999 as any)]} />
+              <FormNumberField name="amount" label="Monto" validators={[numberRequired, numberBetween(0.01, 99999999)]} />
             </div>
             <div className="col-12 md:col-6">
               <FormSelectField name="channel" label="Canal" options={CHANNEL_OPTIONS} validators={[selectRequired]} />

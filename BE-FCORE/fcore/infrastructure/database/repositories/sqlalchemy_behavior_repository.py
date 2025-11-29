@@ -7,7 +7,7 @@ from sqlalchemy import func, cast, Numeric
 from ....core.entities.behavior_profile import BehaviorProfile
 from ....application.interfaces.i_behavior_repository import IBehaviorRepository
 from ..models.behavior_profile_model import BehaviorProfileModel
-from ..models.transaction_model import TransactionModel # Necesario para las queries
+from ..models.transaction_model import TransactionModel
 
 class SqlAlchemyBehaviorRepository(IBehaviorRepository):
     def __init__(self, session: Session):
@@ -28,16 +28,13 @@ class SqlAlchemyBehaviorRepository(IBehaviorRepository):
         self._session.flush()
         return merged_model.to_entity()
 
-    # --- IMPLEMENTACIÓN DE TIMESCALE LOGIC ---
     def calculate_features_from_history(self, customer_id: UUID) -> Dict[str, any]:
         """
         Calculates aggregations directly from the Hypertable.
         This is much safer and more accurate than incremental updates in Python.
         """
-        # Usamos UTC explícito para evitar problemas de offset
         now = datetime.now(timezone.utc)
-        
-        # Helper query function to keep code clean
+
         def get_count(minutes_lookback: int):
             return (
                 self._session.query(func.count(TransactionModel.id))
@@ -51,7 +48,7 @@ class SqlAlchemyBehaviorRepository(IBehaviorRepository):
         # 1. Calculate Counts (Velocity)
         count_10m = get_count(10)
         count_30m = get_count(30)
-        count_24h = get_count(1440) # 24 hours * 60 minutes
+        count_24h = get_count(1440)
 
         # 2. Calculate Average Amount (Last 24h)
         avg_24h = (
@@ -64,7 +61,6 @@ class SqlAlchemyBehaviorRepository(IBehaviorRepository):
         )
 
         # 3. Get Usual Country (Mode of countries in the last 30 days)
-        # This query finds the most frequent country for the customer
         usual_country = (
             self._session.query(TransactionModel.country)
             .filter(
@@ -81,6 +77,6 @@ class SqlAlchemyBehaviorRepository(IBehaviorRepository):
             "tx_count_10m": count_10m,
             "tx_count_30m": count_30m,
             "tx_count_24h": count_24h,
-            "avg_amount_24h": float(avg_24h), # Convert Decimal to float
+            "avg_amount_24h": float(avg_24h),
             "usual_country": usual_country
         }

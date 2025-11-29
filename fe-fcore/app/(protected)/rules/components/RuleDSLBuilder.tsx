@@ -45,6 +45,8 @@ const VARS: { label: string; value: string; type: VarType; enumValues?: string[]
   { label: 'IP Común', value: 'usual_ip', type: 'string' },
   { label: 'Transacción extrangera', value: 'is_foreign_transaction', type: 'boolean' },
   { label: 'Ratio de monto vs promedio', value: 'amount_ratio_vs_avg', type: 'number' },
+  { label: 'Comercio en lista negra', value: 'is_blacklisted_merchant', type: 'boolean' },
+  { label: 'Comercio en lista blanca', value: 'is_whitelisted_merchant', type: 'boolean' },
 ];
 
 const OPS_BY_TYPE: Record<VarType, { label: string; value: string }[]> = {
