@@ -23,7 +23,7 @@ export default function CasesBoard() {
   const columns = useMemo(
     () => [
       { field: 'id', header: 'ID', sortable: true },
-      { field: 'decision', header: 'Estado', sortable: true, body: (r: any) => <TagCell value={r.decision} severity={r.decision === 'APPROVED' ? 'success' : r.decision === 'DECLINED' ? 'danger' : 'warning'} /> },
+      { field: 'decision', header: 'Estado', sortable: true, body: (r: any) => <TagCell value={r.decision} severity={r.decision === 'FALSE_POSITIVE' ? 'success' : r.decision === 'CONFIRMED_FRAUD' ? 'danger' : 'warning'} /> },
       { field: 'alert.id', header: 'Alerta', sortable: true, body: (r: any) => r.alert?.id ?? '—' },
       { field: 'analyst.code', header: 'Analista', sortable: true, body: (r: any) => r.analyst?.code ?? '—' },
       { field: 'created_at', header: 'Creado', sortable: true },
@@ -33,9 +33,9 @@ export default function CasesBoard() {
         header: 'Acciones',
         body: (r: any) => (
           <div className="flex gap-2">
-            <AppButton label="Ver" icon="pi pi-search" size="small" onClick={() => setSelected(r)} />
+            <AppButton label="Ver" severity='info' icon="pi pi-search" size="small" onClick={() => setSelected(r)} />
             <AppButton label="Nota" icon="pi pi-comment" size="small" onClick={() => { setSelected(r); setOpenNote(true); }} />
-            <AppButton label="Resolver" icon="pi pi-check" size="small" severity="success" onClick={() => { setSelected(r); setOpenResolve(true); }} />
+            <AppButton label="Resolver" icon="pi pi-check" size="small" severity="success" disabled={r.decision !== "PENDING"} onClick={() => { setSelected(r); setOpenResolve(true); }} />
           </div>
         ),
         style: { width: '20rem' },
@@ -69,7 +69,7 @@ export default function CasesBoard() {
                 </div>
                 <div className="col-6">
                   <div className="text-600 mb-1">Estado</div>
-                  <TagCell value={selected.decision} severity={selected.decision === 'APPROVED' ? 'success' : selected.decision === 'DECLINED' ? 'danger' : 'warning'} />
+                  <TagCell value={selected.decision} severity={selected.decision === 'FALSE_POSITIVE' ? 'success' : selected.decision === 'CONFIRMED_FRAUD' ? 'danger' : 'warning'} />
                 </div>
               </div>
               <div>
@@ -84,7 +84,7 @@ export default function CasesBoard() {
               </div>
               <div className="flex gap-2">
                 <AppButton label="Agregar nota" icon="pi pi-comment" onClick={() => setOpenNote(true)} />
-                <AppButton label="Resolver" icon="pi pi-check" severity="success" onClick={() => setOpenResolve(true)} />
+              <AppButton label="Resolver" icon="pi pi-check" severity="success" onClick={() => setOpenResolve(true)} />
               </div>
             </div>
           )}
