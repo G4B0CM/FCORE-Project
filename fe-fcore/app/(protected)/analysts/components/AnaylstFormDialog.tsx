@@ -23,30 +23,32 @@ export default function AnalystFormDialog({ visible, onClose, title, initialValu
       onClose={onClose}
       title={title}
       initialValues={initialValues}
-      defaults={{ validateOn: 'both', touchOnMount: true, validateOnMount: true }}
+      defaults={{ validateOn: 'both', touchOnMount: false, validateOnMount: false }}
       submitLabel={submitLabel}
       submitIcon="pi pi-check"
       submitSeverity="success"
       size="md"
       onValid={onValid}
-      onInvalid={() => {}}
+      onInvalid={(errors) => {
+            const first = Object.values(errors || {}).find(Boolean) as string | null;
+          }}
     >
-      <div className="grid pt-2 gap-4">
-        {'password' in initialValues && (
-          <div className="col-12 md:col-6">
-            <FormInputPassword name="password" label="Contraseña" toggleMask feedback validators={[required, minLen(8)]} />
-          </div>
-        )}
-        <div className="col-12 md:col-6">
+      <div className="grid gap-3 mt-3">
+        <div className="col-5">
           <FormInputField name="code" label="Código" placeholder="C10010837" validators={[required, qcode]} disabled={'password' in initialValues ? false : true} />
         </div>
-        <div className="col-12 md:col-6">
-          <FormInputField name="name" label="Nombre" validators={[required]} />
+        {'password' in initialValues && (
+          <div className="col-6">
+            <FormInputPassword className='w-full' name="password" label="Contraseña" toggleMask feedback  validators={[required, minLen(8)]} />
+          </div>
+        )}
+        <div className="col-4">
+          <FormInputField className='w-full' name="name" label="Nombre" validators={[required]} />
         </div>
-        <div className="col-12 md:col-6">
-          <FormInputField name="lastname" label="Apellido" validators={[required]} />
+        <div className="col-4">
+          <FormInputField className="w-full" name="lastname" label="Apellido" validators={[required]} />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-3">
           <FormSelectField name="role_id" label="Rol" placeholder="Seleccione un rol" options={(initialValues as any).roleOptions ?? []} validators={[selectRequired]} />
         </div>
       </div>
