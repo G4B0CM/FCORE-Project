@@ -22,12 +22,9 @@ export default function CasesBoard() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', header: 'ID', sortable: true },
       { field: 'decision', header: 'Estado', sortable: true, body: (r: any) => <TagCell value={r.decision} severity={r.decision === 'FALSE_POSITIVE' ? 'success' : r.decision === 'CONFIRMED_FRAUD' ? 'danger' : 'warning'} /> },
-      { field: 'alert.id', header: 'Alerta', sortable: true, body: (r: any) => r.alert?.id ?? '—' },
       { field: 'analyst.code', header: 'Analista', sortable: true, body: (r: any) => r.analyst?.code ?? '—' },
       { field: 'created_at', header: 'Creado', sortable: true },
-      { field: 'updated_at', header: 'Actualizado', sortable: true },
       {
         field: 'actions',
         header: 'Acciones',
@@ -84,7 +81,7 @@ export default function CasesBoard() {
               </div>
               <div className="flex gap-2">
                 <AppButton label="Agregar nota" icon="pi pi-comment" onClick={() => setOpenNote(true)} />
-              <AppButton label="Resolver" icon="pi pi-check" severity="success" onClick={() => setOpenResolve(true)} />
+              <AppButton label="Resolver" icon="pi pi-check" severity="success" disabled={selected.decision !== "PENDING"} onClick={() => setOpenResolve(true)} />
               </div>
             </div>
           )}
