@@ -22,26 +22,24 @@ export default function CustomerFormDialog({ visible, onClose, title, initialVal
       onClose={onClose}
       title={title}
       initialValues={initialValues}
-      defaults={{ validateOn: 'both', touchOnMount: true, validateOnMount: true }}
+      defaults={{ validateOn: 'both', touchOnMount: false, validateOnMount: false }}
       submitLabel={submitLabel}
       submitIcon="pi pi-check"
       submitSeverity="success"
-      size="md"
+      size="sm"
       onValid={onValid}
       onInvalid={() => {}}
     >
-      <div className="grid pt-2 gap-4">
-        <div className="col-12 md:col-6">
+      <div className="grid mt-3 gap-2 justify-content-center align-center">
+        <div className="col-11 ">
           <FormInputField name="full_name" label="Nombre completo" validators={[required, minLen(3)]} />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-11 ">
           <FormInputField name="document_number" label="Documento" validators={[ cedulaValidator, minLen(5)]} />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-11 flex gap-1">
           <FormInputField name="segment" label="Segmento" />
-        </div>
-        <div className="col-12 md:col-6">
-          <FormNumberField name="age" label="Edad" validators={[numberBetween(18, 100)]} />
+          <FormNumberField  name="age" label="Edad" validators={[numberBetween(18, 100)]} />
         </div>
       </div>
     </FormDialog>
