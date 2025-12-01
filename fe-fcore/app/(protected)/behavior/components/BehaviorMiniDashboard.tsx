@@ -36,7 +36,7 @@ export default function BehaviorMiniDashboard({ avg_amount_24h, tx_count_10m, tx
     datasets: [
       {
         data: [1, ratio],
-        backgroundColor: ['#10B981', '#F59E0B'],
+        backgroundColor: ['#0BF', '#F59E0F'],
         borderWidth: 0,
       },
     ],
@@ -44,7 +44,7 @@ export default function BehaviorMiniDashboard({ avg_amount_24h, tx_count_10m, tx
 
   const doughnutOptions = {
     cutout: '60%',
-    plugins: { legend: { display: false } },
+    plugins: { legend: { display: true } },
     maintainAspectRatio: false,
   };
 

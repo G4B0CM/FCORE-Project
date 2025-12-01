@@ -88,7 +88,17 @@ export default function RulesTable() {
         <AppButton label="Nueva regla" icon="pi pi-plus" severity="primary" onClick={() => setOpenCreate(true)} />
       </div>
 
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['name', 'dsl_expression', 'severity', 'created_by']} columns={columns as any} paginator rows={10} rowsPerPageOptions={[10, 20, 50]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['name', 'dsl_expression', 'severity', 'created_by']} 
+      columns={columns as any} 
+      paginator rows={10} 
+      rowsPerPageOptions={[10, 20, 50]}
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3" />
 
       <RuleFormDialog visible={openCreate} onClose={() => setOpenCreate(false)} title="Nueva regla" initialValues={{ name: '', dsl_expression: '', severity: 'LOW' }} submitLabel="Crear" onValid={onCreateValid} />
 

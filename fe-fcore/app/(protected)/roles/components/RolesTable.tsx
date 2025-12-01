@@ -85,7 +85,18 @@ export default function RolesTable() {
         <AppButton label="Nuevo rol" icon="pi pi-plus" severity="primary" onClick={() => setOpenCreate(true)} />
       </div>
 
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['name', 'description']} columns={columns as any} paginator rows={10} rowsPerPageOptions={[10, 20, 50]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['name', 'description']} 
+      columns={columns as any} 
+      paginator 
+      rows={10} 
+      rowsPerPageOptions={[10, 20, 50]} 
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3"/>
 
       <RoleFormDialog visible={openCreate} onClose={() => setOpenCreate(false)} title="Nuevo rol" initialValues={{ name: '', description: '' }} submitLabel="Crear" onValid={onCreateValid} />
 
