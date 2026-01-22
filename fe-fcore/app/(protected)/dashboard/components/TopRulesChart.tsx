@@ -26,7 +26,7 @@ export default function TopRulesChart({ items }: { items: RuleHitAgg[] }) {
   };
 
   return (
-    <div className="surface-card p-4 border-round shadow-1" >
+    <div className="surface-card border-round shadow-1 w-full" >
       <h3 className="m-0 mb-2 text-600">Reglas que más se dispararon</h3>
       <AppChart type="bar" data={data} options={options} />
     </div>
