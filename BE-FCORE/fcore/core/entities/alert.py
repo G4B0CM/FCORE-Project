@@ -31,3 +31,5 @@ class Alert:
     transaction: Optional[Transaction] = None
     creator: Optional[Analyst] = None
     triggered_rules: Optional[List[Rule]] = None 
+     
+     

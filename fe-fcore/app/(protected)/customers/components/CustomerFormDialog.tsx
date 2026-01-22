@@ -38,8 +38,8 @@ export default function CustomerFormDialog({ visible, onClose, title, initialVal
           <FormInputField name="document_number" label="Documento" validators={[ cedulaValidator, minLen(5)]} />
         </div>
         <div className="col-11 flex gap-1">
-          <FormInputField name="segment" label="Segmento" />
-          <FormNumberField  name="age" label="Edad" validators={[numberBetween(18, 100)]} />
+          <FormInputField className='flex-1' name="segment" label="Segmento" />
+          <FormNumberField className='flex-none' name="age" label="Edad" validators={[numberBetween(18, 100)]} />
         </div>
       </div>
     </FormDialog>
