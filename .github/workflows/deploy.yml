@@ -1,0 +1,48 @@
+name: Deploy FCORE Monorepo
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          # Aumentamos el timeout porque el build en t3.micro es lento
+          command_timeout: 30m 
+          script: |
+            # 1. Crear carpeta del proyecto
+            mkdir -p ~/FCORE
+            cd ~/FCORE
+
+            # 2. Actualizar código (Git Pull manual o Clone)
+            # Como GitHub Actions ya hizo checkout, podriamos usar rsync, 
+            # pero lo mas facil es git pull en el servidor.
+            if [ ! -d ".git" ]; then
+              # Clona tu repo (asegúrate de usar https o tener llaves ssh configuradas en el server para github)
+              # Si el repo es privado, usa token personal en la URL: 
+              # git clone https://TOKEN@github.com/USUARIO/REPO.git .
+              git clone https://github.com/${{ github.repository }}.git .
+            else
+              git fetch origin
+              git reset --hard origin/main
+            fi
+
+            # 3. Crear archivo .env de Producción
+            echo "${{ secrets.PROD_ENV_FILE }}" > .env
+
+            # 4. Desplegar
+            # --build fuerza la reconstrucción de las imágenes con el nuevo código
+            sudo docker compose -f compose.prod.yaml up -d --build --remove-orphans
+            
+            # 5. Limpieza de imágenes viejas (ahorra espacio en disco)
+            sudo docker image prune -f
