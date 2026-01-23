@@ -29,7 +29,7 @@ jobs:
       - name: Run Tests
         # Ejecuta pytest y falla si algún test no pasa
         run: |
-          pytest tests/ -v --cov=fcore --cov-fail-under=70
+          pytest be-fcore/tests/ -v --cov=fcore --cov-fail-under=70
         env:
           # Variables fake para que no falle config si las usa
           SECRET_KEY: "testing_key"
