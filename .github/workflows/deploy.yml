@@ -12,8 +12,6 @@ jobs:
   # ------------------------------------------------------------------
   test:
     runs-on: ubuntu-latest
-    # IMPORTANTE: Definimos que los pasos de 'run' por defecto se ejecuten
-    # dentro de la carpeta del backend
     defaults:
       run:
         working-directory: ./BE-FCORE
@@ -28,19 +26,20 @@ jobs:
           python-version: "3.13"
 
       - name: Install dependencies
-        # Al tener el working-directory arriba, esto se ejecuta dentro de BE-FCORE/
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          # Instalamos dependencias de prueba
           pip install pytest pytest-mock pytest-cov httpx
 
       - name: Run Tests
-        # Ejecuta pytest buscando la carpeta tests/ dentro de BE-FCORE/
+        # --- FIX: Agregamos PYTHONPATH=. para que encuentre el módulo 'fcore' ---
         run: |
           pytest tests/ -v --cov=fcore --cov-fail-under=70
         env:
           SECRET_KEY: "testing_key"
           ALGORITHM: "HS256"
+          PYTHONPATH: .  # <--- ESTA LÍNEA ES LA SOLUCIÓN MÁGICA
 
   # ------------------------------------------------------------------
   # JOB 2: CD - Despliegue Continuo
@@ -58,13 +57,12 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           command_timeout: 30m 
           script: |
-            # 1. Crear/Ir a carpeta raíz del proyecto (Monorepo)
+            # 1. Crear/Ir a carpeta raíz del proyecto
             mkdir -p ~/FCORE
             cd ~/FCORE
 
-            # 2. Actualizar código del Monorepo completo
+            # 2. Actualizar código
             if [ ! -d ".git" ]; then
-              # Clona todo el monorepo (Backend y Frontend)
               git clone https://github.com/${{ github.repository }}.git .
             else
               git fetch origin
@@ -72,16 +70,11 @@ jobs:
             fi
 
             # 3. Entrar a la carpeta del Backend
-            # Aquí es donde vive tu Dockerfile, requirements, etc.
             cd BE-FCORE
 
-            # 4. Crear archivo .env de Producción (Dentro del backend)
+            # 4. Configurar entorno y desplegar
             echo "${{ secrets.PROD_ENV_FILE }}" > .env
-
-            # 5. Desplegar
-            # Asumimos que compose.prod.yaml está dentro de BE-FCORE
-            # Si está en la raíz, quita el paso 3 y ajusta la ruta del build
             sudo docker compose -f compose.prod.yaml up -d --build --remove-orphans
             
-            # 6. Limpieza
+            # 5. Limpieza
             sudo docker image prune -f
