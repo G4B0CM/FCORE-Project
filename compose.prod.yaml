@@ -21,7 +21,7 @@ services:
   # Backend (FastAPI)
   backend:
     build:
-      context: ./be-fcore # <--- Apunta a la carpeta del backend
+      context: ./BE-FCORE # <--- Apunta a la carpeta del backend
       dockerfile: Dockerfile
     container_name: fcore-backend
     restart: always
