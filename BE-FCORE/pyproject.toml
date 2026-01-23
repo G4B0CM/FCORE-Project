@@ -21,3 +21,19 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.pytest.ini_options]
+pythonpath = "."
+testpaths = ["tests"]
+
+[tool.coverage.run]
+source = ["fcore"]
+omit = [
+    "fcore/main.py",
+    "fcore/seed.py",
+    "fcore/presentation/api/*",  # Opcional: Si no testeamos controllers aún
+    "tests/*"
+]
+
+[tool.coverage.report]
+show_missing = true
