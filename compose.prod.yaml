@@ -1,0 +1,59 @@
+version: "3.8"
+
+services:
+  # Base de Datos (TimescaleDB - PostgreSQL 14)
+  db:
+    image: timescale/timescaledb:latest-pg14
+    container_name: fcore-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Backend (FastAPI)
+  backend:
+    build:
+      context: ./be-fcore # <--- Apunta a la carpeta del backend
+      dockerfile: Dockerfile
+    container_name: fcore-backend
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_HOST: db # Nombre del servicio arriba
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB}
+      SECRET_KEY: ${SECRET_KEY}
+      NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
+      # PYTHONPATH se asegura en el entrypoint, pero por seguridad:
+      PYTHONPATH: /app
+
+  # Frontend (Next.js)
+  frontend:
+    build:
+      context: ./fe-fcore # <--- Apunta a la carpeta del frontend
+      dockerfile: Dockerfile
+    container_name: fcore-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+      NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
+      NEXT_PUBLIC_COOKIE_SAMESITE: "lax"
+
+volumes:
+  postgres_data:

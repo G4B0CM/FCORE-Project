@@ -16,8 +16,24 @@ from fcore.core.errors.roles_errors import RoleNotFoundError
 from fcore.core.errors.rule_errors import RuleNotFoundError, RuleAlreadyExistsError
 from fcore.core.errors.alert_errors import AlertNotFoundError
 from fcore.core.errors.case_errors import CaseNotFoundError, CaseAlreadyExistsError
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Fraud Detection System API")
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    
+    "*" 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # --- Custom Exception Handlers ---
 @app.exception_handler(AnalystNotFoundError)
