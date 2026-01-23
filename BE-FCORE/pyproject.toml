@@ -14,7 +14,9 @@ dependencies = [
     "sqlalchemy",
     "pydantic-settings",
     "psycopg2-binary",
-    "simpleeval"
+    "simpleeval",
+    "pytest",
+    "httpx"
 ]
 
 [tool.setuptools.packages.find]
