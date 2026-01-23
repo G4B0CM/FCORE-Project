@@ -3,7 +3,7 @@ FROM python:3.9-slim
 WORKDIR /app
 
 # Dependencias del sistema (libpq para Postgres)
-RUN apt-get update && apt-get install -y gcc libpq-dev netcat-openbsd
+RUN apt-get update && apt-get install -y gcc libpq-dev netcat-openbsd git
 
 # Copiar requirements
 COPY requirements.txt .
