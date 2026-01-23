@@ -7,43 +7,49 @@ on:
     branches: [ "main" ]
 
 jobs:
-  # Job 1: Build y Test (Integración Continua)
+  # ------------------------------------------------------------------
+  # JOB 1: CI - Pruebas y Calidad
+  # ------------------------------------------------------------------
   test:
     runs-on: ubuntu-latest
+    # IMPORTANTE: Definimos que los pasos de 'run' por defecto se ejecuten
+    # dentro de la carpeta del backend
+    defaults:
+      run:
+        working-directory: ./BE-FCORE
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python 3.9
+      - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
+          python-version: "3.13"
 
       - name: Install dependencies
+        # Al tener el working-directory arriba, esto se ejecuta dentro de BE-FCORE/
         run: |
           python -m pip install --upgrade pip
-          # Instalar dependencias del proyecto y de pruebas
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest pytest-mock pytest-cov httpx
 
       - name: Run Tests
-        # Ejecuta pytest y falla si algún test no pasa
+        # Ejecuta pytest buscando la carpeta tests/ dentro de BE-FCORE/
         run: |
-          pytest be-fcore/tests/ -v --cov=fcore --cov-fail-under=70
+          pytest tests/ -v --cov=fcore --cov-fail-under=70
         env:
-          # Variables fake para que no falle config si las usa
           SECRET_KEY: "testing_key"
           ALGORITHM: "HS256"
 
-  # Job 2: Deploy (Entrega Continua) - Solo corre si 'test' pasa
+  # ------------------------------------------------------------------
+  # JOB 2: CD - Despliegue Continuo
+  # ------------------------------------------------------------------
   deploy:
-    needs: test # Dependencia explícita: si test falla, deploy no corre
+    needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -52,23 +58,30 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           command_timeout: 30m 
           script: |
-            # 1. Crear carpeta del proyecto
+            # 1. Crear/Ir a carpeta raíz del proyecto (Monorepo)
             mkdir -p ~/FCORE
             cd ~/FCORE
 
-            # 2. Actualizar código
+            # 2. Actualizar código del Monorepo completo
             if [ ! -d ".git" ]; then
+              # Clona todo el monorepo (Backend y Frontend)
               git clone https://github.com/${{ github.repository }}.git .
             else
               git fetch origin
               git reset --hard origin/main
             fi
 
-            # 3. Crear archivo .env de Producción
+            # 3. Entrar a la carpeta del Backend
+            # Aquí es donde vive tu Dockerfile, requirements, etc.
+            cd BE-FCORE
+
+            # 4. Crear archivo .env de Producción (Dentro del backend)
             echo "${{ secrets.PROD_ENV_FILE }}" > .env
 
-            # 4. Desplegar
+            # 5. Desplegar
+            # Asumimos que compose.prod.yaml está dentro de BE-FCORE
+            # Si está en la raíz, quita el paso 3 y ajusta la ruta del build
             sudo docker compose -f compose.prod.yaml up -d --build --remove-orphans
             
-            # 5. Limpieza
+            # 6. Limpieza
             sudo docker image prune -f
