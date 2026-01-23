@@ -2,20 +2,26 @@ FROM python:3.9-slim
 
 WORKDIR /app
 
-# Dependencias del sistema (libpq para Postgres)
+# 1. Instalar dependencias del sistema (incluyendo git por si acaso)
 RUN apt-get update && apt-get install -y gcc libpq-dev netcat-openbsd git
 
-# Copiar requirements
+# 2. Copiar archivos de definición de dependencias
 COPY requirements.txt .
+COPY pyproject.toml .
+
+# 3. Instalar dependencias externas (librerías)
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar TODO el contenido de be-fcore al contenedor
+# 4. Copiar el código fuente
 COPY . .
 
-# Dar permisos al entrypoint
+# 5. Instalar NUESTRO proyecto como paquete (usando pyproject.toml)
+# Esto permite hacer "import fcore" desde cualquier lado
+RUN pip install --no-cache-dir .
+
+# 6. Permisos al entrypoint
 RUN chmod +x entrypoint.sh
 
 EXPOSE 8000
 
-# Usar el script de entrada
 ENTRYPOINT ["./entrypoint.sh"]
