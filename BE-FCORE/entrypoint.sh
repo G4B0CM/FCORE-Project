@@ -23,4 +23,4 @@ fi
 # Iniciar Uvicorn
 echo "🔥 [Backend] Arrancando servidor..."
 # Importante: Como tu main.py está en fcore/presentation/api/main.py
-exec uvicorn fcore.presentation.api.main:app --host 0.0.0.0 --port 8000
+exec uvicorn fcore.main:app --host 0.0.0.0 --port 8000
