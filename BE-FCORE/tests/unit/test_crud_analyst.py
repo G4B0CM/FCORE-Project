@@ -1,3 +1,4 @@
+# File: tests/unit/test_crud_analyst.py
 import pytest
 from unittest.mock import Mock, MagicMock
 from fcore.application.use_cases.crud_analyst_use_case import CrudAnalystUseCase
@@ -12,9 +13,13 @@ def test_create_analyst_success():
     use_case = CrudAnalystUseCase(repo, role_repo, hasher)
 
     schema = MagicMock()
-    schema.code = "A002"
+    schema.code = "C1000002"
     schema.password = "123456"
     schema.role_id = 1
+    # --- FIX: Definimos datos obligatorios para pasar la validación de la Entidad ---
+    schema.name = "Test Name"
+    schema.lastname = "Test Lastname"
+    # ------------------------------------------------------------------------------
 
     repo.find_by_code.return_value = None # No existe
     role_entity = MagicMock()
@@ -37,7 +42,7 @@ def test_create_analyst_duplicate_code():
     repo.find_by_code.return_value = MagicMock() # Ya existe
 
     schema = MagicMock()
-    schema.code = "A002"
+    schema.code = "C1000002"
 
     with pytest.raises(AnalystAlreadyExistsError):
         use_case.create(schema, "ADMIN")
