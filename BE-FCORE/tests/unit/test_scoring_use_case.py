@@ -21,9 +21,9 @@ def mocks():
 @pytest.fixture
 def scoring_use_case(mocks):
     return ScoringUseCase(
-        mocks["tx_repo"], mocks["beh_repo"], mocks["rule_repo"], mocks["rule_eval"],
+        mocks["tx_repo"], mocks["beh_repo"], mocks["rule_repo"], 
         mocks["alert_repo"], mocks["case_repo"], mocks["analyst_repo"],
-        mocks["scorer"], mocks["decision_service"]
+        mocks["scorer"], mocks["decision_service"],mocks["rule_eval"]
     )
 
 def test_scoring_flow_high_risk(scoring_use_case, mocks):
