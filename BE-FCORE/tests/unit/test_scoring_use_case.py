@@ -10,6 +10,7 @@ def mocks():
         "tx_repo": Mock(),
         "beh_repo": Mock(),
         "rule_repo": Mock(),
+        "rule_eval" : Mock(),
         "alert_repo": Mock(),
         "case_repo": Mock(),
         "analyst_repo": Mock(),
@@ -20,7 +21,7 @@ def mocks():
 @pytest.fixture
 def scoring_use_case(mocks):
     return ScoringUseCase(
-        mocks["tx_repo"], mocks["beh_repo"], mocks["rule_repo"],
+        mocks["tx_repo"], mocks["beh_repo"], mocks["rule_repo"], mocks["rule_eval"],
         mocks["alert_repo"], mocks["case_repo"], mocks["analyst_repo"],
         mocks["scorer"], mocks["decision_service"]
     )
