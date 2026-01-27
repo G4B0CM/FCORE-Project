@@ -1,12 +1,10 @@
 from typing import Optional, List
 from uuid import UUID
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
 
 from ....core.entities.role import Role
 from ....application.interfaces.i_role_repository import IRoleRepository
 from ..models.role_model import RoleModel
-from ....core.errors.roles_errors import RoleAlreadyExistsError
 
 class SqlAlchemyRoleRepository(IRoleRepository):
     def __init__(self, session: Session):
@@ -14,14 +12,9 @@ class SqlAlchemyRoleRepository(IRoleRepository):
 
     def create(self, role: Role) -> Role:
         new_role_model = RoleModel.from_entity(role)
-        try:
-            self._session.add(new_role_model)
-            self._session.flush()
-            self._session.commit()
-            return new_role_model.to_entity()
-        except IntegrityError:
-            self._session.rollback()
-            raise RoleAlreadyExistsError(f"A role with name '{role.name}' already exists.")
+        self._session.add(new_role_model)
+        self._session.flush()
+        return new_role_model.to_entity()
 
     def find_by_id(self, id: UUID) -> Optional[Role]:
         role_model = self._session.query(RoleModel).filter_by(id=id).first()
@@ -43,8 +36,6 @@ class SqlAlchemyRoleRepository(IRoleRepository):
         role_model.description = role.description
         role_model.is_active = role.is_active
         self._session.flush()
-        self._session.commit()
-            
         return role_model.to_entity()
 
     def delete(self, id: UUID) -> bool:
@@ -54,6 +45,4 @@ class SqlAlchemyRoleRepository(IRoleRepository):
         
         self._session.delete(role_model)
         self._session.flush()
-        self._session.commit()
-            
         return True

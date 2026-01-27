@@ -19,6 +19,7 @@ from ...infrastructure.database.repositories.sqlalchemy_rule_repository import S
 from ...infrastructure.database.repositories.sqlalchemy_alert_repository import SqlAlchemyAlertRepository
 from ...infrastructure.database.repositories.sqlalchemy_case_repository import SqlAlchemyCaseRepository
 from ...infrastructure.strategies.simple_eval_evaluator import SimpleEvalEvaluator
+from ...infrastructure.database.unit_of_work import SqlAlchemyUnitOfWork
 from ...infrastructure.ml.xgb_scorer import XgbScorerStub
 
 from ...application.services.decision_service import DecisionService
@@ -40,6 +41,7 @@ from ...application.interfaces.i_transaction_repository import ITransactionRepos
 from ...application.interfaces.i_password_hasher import IPasswordHasher
 from ...application.interfaces.i_token_provider import ITokenProvider
 from ...application.interfaces.i_rule_evaluator import IRuleEvaluator
+from ...application.interfaces.i_unit_of_work import IUnitOfWork
 from ...application.use_cases.auth_use_case import AuthUseCase
 from ...application.use_cases.crud_analyst_use_case import CrudAnalystUseCase
 from ...application.use_cases.crud_role_use_case import CrudRoleUseCase
@@ -108,6 +110,9 @@ def get_alert_repo(db: Session = Depends(get_db)):
 def get_case_repo(db: Session = Depends(get_db)):
     return SqlAlchemyCaseRepository(db)
 
+def get_uow():
+    return SqlAlchemyUnitOfWork(session_factory=SessionLocal)
+
 # --- Service Dependencies ---
 def get_model_scorer() -> IModelScorer:
     return XgbScorerStub()
@@ -120,11 +125,10 @@ def get_rule_evaluator() -> IRuleEvaluator:
 
 # --- Use Case Dependencies ---
 def get_analyst_crud_use_case(
-    repo: SqlAlchemyAnalystRepository = Depends(get_analyst_repo),
-    role_repo: SqlAlchemyRoleRepository = Depends(get_role_repo),
+    uow: IUnitOfWork = Depends(get_uow),
     hasher: BcryptPasswordHasher = Depends(get_password_hasher)
 ):
-    return CrudAnalystUseCase(analyst_repository=repo, role_repository=role_repo, password_service=hasher)
+    return CrudAnalystUseCase(uow=uow, password_service=hasher)
 
 def get_role_crud_use_case(repo: SqlAlchemyRoleRepository = Depends(get_role_repo)):
     return CrudRoleUseCase(role_repository=repo)
