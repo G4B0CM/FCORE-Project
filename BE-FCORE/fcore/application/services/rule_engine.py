@@ -8,35 +8,22 @@ from ..interfaces.i_rule_evaluator import IRuleEvaluator
 
 logger = logging.getLogger(__name__)
 
-# Type alias for clarity
 RuleHit = Dict[str, Any]
 
 class RuleEngine:
-    """
-    The Context in the Strategy Pattern.
-    It prepares the data (context) and delegates the actual logic 
-    to the injected IRuleEvaluator strategy.
-    """
+
 
     def __init__(self, rules: List[Rule], evaluator: IRuleEvaluator):
-        """
-        Args:
-            rules: List of enabled rules to check.
-            evaluator: The strategy to use for evaluation.
-        """
+
         self._rules = [rule for rule in rules if rule.enabled]
         self._evaluator = evaluator
 
     def evaluate(self, transaction: Transaction, behavior: BehaviorProfile) -> List[RuleHit]:
-        """
-        Iterates over loaded rules and evaluates them using the strategy.
-        """
+
         hits: List[RuleHit] = []
 
-        # 1. Build the context (the data available to the rules)
         context = self._build_context(transaction, behavior)
 
-        # 2. Delegate evaluation to the strategy
         for rule in self._rules:
             is_triggered = self._evaluator.evaluate(rule, context)
             
@@ -46,15 +33,13 @@ class RuleEngine:
                     "rule_id": str(rule.id),
                     "rule_name": rule.name,
                     "dsl_expression": rule.dsl_expression,
-                    "severity": rule.severity.value # Assuming Severity is an Enum
+                    "severity": rule.severity.value
                 })
 
         return hits
 
     def _build_context(self, tx: Transaction, beh: BehaviorProfile) -> Dict[str, Any]:
-        """
-        Maps entity attributes to a flat dictionary for the Strategy.
-        """
+
         return {
             # --- Transaction Attributes ---
             "amount": float(tx.amount),

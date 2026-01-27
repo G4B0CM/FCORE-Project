@@ -10,7 +10,6 @@ from ...core.errors.roles_errors import RoleNotFoundError
 from ...presentation.api.schemas.analyst_schemas import AnalystCreate, AnalystUpdate
 
 class CrudAnalystUseCase:
-    """Use case for CRUD operations on an Analyst using Unit of Work."""
     
     def __init__(
         self, 
@@ -21,11 +20,8 @@ class CrudAnalystUseCase:
         self._password_hasher = password_service
 
     def create(self, analyst_schema: AnalystCreate, created_by_code: str) -> Analyst:
-        """
-        Orchestrates the creation of a new analyst within a transaction.
-        """
+
         with self._uow:
-            # 1. Validation Logic
             if self._uow.analyst_repository.find_by_code(analyst_schema.code):
                 raise AnalystAlreadyExistsError(f"Analyst with code {analyst_schema.code} already exists.")
 
@@ -33,7 +29,6 @@ class CrudAnalystUseCase:
             if not role_entity or not role_entity.is_active:
                 raise RoleNotFoundError(f"Role with ID {analyst_schema.role_id} not found or is inactive.")
 
-            # 2. Business Logic
             password_hash = self._password_hasher.hash(analyst_schema.password)
             new_analyst = Analyst(
                 name=analyst_schema.name,
@@ -45,14 +40,12 @@ class CrudAnalystUseCase:
                 created_by=created_by_code
             )
             
-            # 3. Persistence
             created_analyst = self._uow.analyst_repository.create(new_analyst)
-            self._uow.commit() # Atomic Commit
+            self._uow.commit()
             
             return created_analyst
 
     def get_all(self) -> List[Analyst]:
-        """Gets all analysts (Read-only operation)."""
         with self._uow:
             return self._uow.analyst_repository.get_all()
 

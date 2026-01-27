@@ -5,8 +5,8 @@ type Tx = {
   amount: number;
   occurred_at?: string;
   merchant_id?: string;
-  status?: string;      // opcional si tu schema lo expone
-  decision?: string;    // opcional
+  status?: string;
+  decision?: string;
 };
 
 type Alert = {
