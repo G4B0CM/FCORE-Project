@@ -30,16 +30,14 @@ export default function DashboardPage() {
   );
 
   const fraudAmount = useMemo(() => {
-    // Tomamos alertas con action DENY y sumamos monto de su transacción
     return alerts
       .filter(a => String(a.action).toUpperCase() === 'DECLINE')
       .reduce((acc, a) => acc + Number(a.transaction?.amount || 0), 0);
   }, [alerts]);
 
   const approvalRate = useMemo(() => {
-    // Aprobación ~ 1 - (denegadas / total con decisión)
     const denied = alerts.filter(a => String(a.action).toUpperCase() === 'DECLINE').length;
-    const decided = alerts.length; // si hay CHALLENGE/REVIEW, ajusta según tu definición
+    const decided = alerts.length;
     if (!decided) return 1;
     return Math.max(0, 1 - denied / decided);
   }, [alerts]);
@@ -53,7 +51,6 @@ export default function DashboardPage() {
   }, [txs]);
 
   const ruleAgg = useMemo(() => {
-    // rule_hits puede venir como {hits: [{rule_name:..}, ...]} o como array directo
     const counts = new Map<string, number>();
     for (const a of alerts) {
       const rh = Array.isArray(a.rule_hits) ? a.rule_hits : a.rule_hits?.hits;
@@ -64,7 +61,6 @@ export default function DashboardPage() {
       }
     }
     const arr = Array.from(counts.entries()).map(([rule, count]) => ({ rule, count }));
-    // intenta mapear id->name si vienen como IDs
     const nameMap = new Map(rules.map(r => [r.id, r.name]));
     return arr.map(x => ({ rule: nameMap.get(x.rule) || x.rule, count: x.count })).sort((a, b) => b.count - a.count);
   }, [alerts, rules]);
