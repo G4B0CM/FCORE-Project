@@ -18,6 +18,7 @@ from ...infrastructure.database.repositories.sqlalchemy_behavior_repository impo
 from ...infrastructure.database.repositories.sqlalchemy_rule_repository import SqlAlchemyRuleRepository
 from ...infrastructure.database.repositories.sqlalchemy_alert_repository import SqlAlchemyAlertRepository
 from ...infrastructure.database.repositories.sqlalchemy_case_repository import SqlAlchemyCaseRepository
+from ...infrastructure.strategies.simple_eval_evaluator import SimpleEvalEvaluator
 from ...infrastructure.ml.xgb_scorer import XgbScorerStub
 
 from ...application.services.decision_service import DecisionService
@@ -38,6 +39,7 @@ from ...application.interfaces.i_alert_repository import IAlertRepository
 from ...application.interfaces.i_transaction_repository import ITransactionRepository
 from ...application.interfaces.i_password_hasher import IPasswordHasher
 from ...application.interfaces.i_token_provider import ITokenProvider
+from ...application.interfaces.i_rule_evaluator import IRuleEvaluator
 from ...application.use_cases.auth_use_case import AuthUseCase
 from ...application.use_cases.crud_analyst_use_case import CrudAnalystUseCase
 from ...application.use_cases.crud_role_use_case import CrudRoleUseCase
@@ -113,6 +115,9 @@ def get_model_scorer() -> IModelScorer:
 def get_decision_service() -> DecisionService:
     return DecisionService()
 
+def get_rule_evaluator() -> IRuleEvaluator:
+    return SimpleEvalEvaluator()
+
 # --- Use Case Dependencies ---
 def get_analyst_crud_use_case(
     repo: SqlAlchemyAnalystRepository = Depends(get_analyst_repo),
@@ -167,6 +172,7 @@ def get_scoring_use_case(
     transaction_repo: ITransactionRepository = Depends(get_transaction_repo),
     behavior_repo: IBehaviorRepository = Depends(get_behavior_repo),
     rule_repo: IRuleRepository = Depends(get_rule_repo),
+    evaluator: IRuleEvaluator = Depends(get_rule_evaluator),
     alert_repo: IAlertRepository = Depends(get_alert_repo),
     case_repo: ICaseRepository = Depends(get_case_repo),
     analyst_repo: IAnalystRepository = Depends(get_analyst_repo),
@@ -177,6 +183,7 @@ def get_scoring_use_case(
         transaction_repo=transaction_repo,
         behavior_repo=behavior_repo,
         rule_repo=rule_repo,
+        rule_evaluator=evaluator,
         alert_repo=alert_repo,
         case_repo=case_repo,
         analyst_repo=analyst_repo,

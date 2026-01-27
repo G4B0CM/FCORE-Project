@@ -1,59 +1,59 @@
 from typing import List, Dict, Any
 import logging
-from simpleeval import SimpleEval, NameNotDefined
 
 from ...core.entities.rule import Rule
 from ...core.entities.transaction import Transaction
 from ...core.entities.behavior_profile import BehaviorProfile
+from ..interfaces.i_rule_evaluator import IRuleEvaluator
 
-# Configurar logger para ver qué pasa con las reglas
 logger = logging.getLogger(__name__)
 
+# Type alias for clarity
 RuleHit = Dict[str, Any]
 
 class RuleEngine:
     """
-    A secure rule engine that evaluates DSL expressions using simpleeval.
+    The Context in the Strategy Pattern.
+    It prepares the data (context) and delegates the actual logic 
+    to the injected IRuleEvaluator strategy.
     """
 
-    def __init__(self, rules: List[Rule]):
+    def __init__(self, rules: List[Rule], evaluator: IRuleEvaluator):
         """
-        Initializes the engine with a list of enabled rules.
+        Args:
+            rules: List of enabled rules to check.
+            evaluator: The strategy to use for evaluation.
         """
         self._rules = [rule for rule in rules if rule.enabled]
+        self._evaluator = evaluator
 
     def evaluate(self, transaction: Transaction, behavior: BehaviorProfile) -> List[RuleHit]:
         """
-        Evaluates the transaction and behavior profile against all loaded rules.
+        Iterates over loaded rules and evaluates them using the strategy.
         """
         hits: List[RuleHit] = []
 
+        # 1. Build the context (the data available to the rules)
         context = self._build_context(transaction, behavior)
 
-        evaluator = SimpleEval(names=context)
-
+        # 2. Delegate evaluation to the strategy
         for rule in self._rules:
-            try:
-                is_triggered = evaluator.eval(rule.dsl_expression)
-                
-                if is_triggered:
-                    logger.info(f"Rule triggered: {rule.name}")
-                    hits.append({
-                        "rule_id": str(rule.id),
-                        "rule_name": rule.name,
-                        "dsl_expression": rule.dsl_expression,
-                        "severity": rule.severity.value
-                    })
+            is_triggered = self._evaluator.evaluate(rule, context)
             
-            except (SyntaxError, NameNotDefined, Exception) as e:
-                logger.error(f"Error evaluating rule '{rule.name}' (DSL: {rule.dsl_expression}): {str(e)}")
-                continue
+            if is_triggered:
+                logger.info(f"Rule triggered: {rule.name}")
+                hits.append({
+                    "rule_id": str(rule.id),
+                    "rule_name": rule.name,
+                    "dsl_expression": rule.dsl_expression,
+                    "severity": rule.severity.value # Assuming Severity is an Enum
+                })
 
         return hits
 
     def _build_context(self, tx: Transaction, beh: BehaviorProfile) -> Dict[str, Any]:
         """
-        Maps entity attributes to a flat dictionary for the DSL.
+        Maps entity attributes to a flat dictionary for the Strategy.
         """
         return {
             # --- Transaction Attributes ---
@@ -72,9 +72,11 @@ class RuleEngine:
             "usual_country": beh.usual_country,
             "usual_ip": beh.usual_ip,
             
-            # --- Helper / Derived Logic (Optional) ---
+            # --- Helper / Derived Logic ---
             "is_foreign_transaction": tx.country != beh.usual_country if (tx.country and beh.usual_country) else False,
             "amount_ratio_vs_avg": (float(tx.amount) / float(beh.avg_amount_24h)) if beh.avg_amount_24h > 0 else 1.0,
-            "is_blacklisted_merchant": tx.merchant.is_blacklisted if tx.merchant else False,
-            "is_whitelisted_merchant": tx.merchant.is_whitelisted if tx.merchant else False
+            
+            # If Merchant entity is populated
+            "is_blacklisted_merchant": tx.merchant.is_blacklisted if getattr(tx, 'merchant', None) else False,
+            "is_whitelisted_merchant": tx.merchant.is_whitelisted if getattr(tx, 'merchant', None) else False
         }
