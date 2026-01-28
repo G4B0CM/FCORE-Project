@@ -1,7 +1,7 @@
 version: "3.8"
 
 services:
-  # Base de Datos (TimescaleDB - PostgreSQL 14)
+  # Base de Datos
   db:
     image: timescale/timescaledb:latest-pg14
     container_name: fcore-db
@@ -21,11 +21,9 @@ services:
   # Backend (FastAPI)
   backend:
     build:
-      context: ./BE-FCORE # <--- Apunta a la carpeta del backend
+      context: ./BE-FCORE
       dockerfile: Dockerfile
-      args:
-        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
-        NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
+      # --- BORRA LOS ARGS DE AQUÍ, NO LOS NECESITA ---
     container_name: fcore-backend
     restart: always
     depends_on:
@@ -36,19 +34,24 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_HOST: db # Nombre del servicio arriba
+      POSTGRES_HOST: db
       POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
       SECRET_KEY: ${SECRET_KEY}
       NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
-      # PYTHONPATH se asegura en el entrypoint, pero por seguridad:
       PYTHONPATH: /app
 
   # Frontend (Next.js)
   frontend:
     build:
-      context: ./fe-fcore # <--- Apunta a la carpeta del frontend
+      context: ./fe-fcore
+      # Asegúrate que el archivo en la carpeta fe-fcore se llame "Dockerfile"
       dockerfile: Dockerfile
+      # --- PEGA LOS ARGS AQUÍ (ESTO ES LO QUE FALTABA) ---
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
+      # ---------------------------------------------------
     container_name: fcore-frontend
     restart: always
     ports:
