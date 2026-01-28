@@ -23,6 +23,9 @@ services:
     build:
       context: ./BE-FCORE # <--- Apunta a la carpeta del backend
       dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL}
+        NEXT_PUBLIC_HOST: ${NEXT_PUBLIC_HOST}
     container_name: fcore-backend
     restart: always
     depends_on:
