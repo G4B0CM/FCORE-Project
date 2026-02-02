@@ -4,22 +4,17 @@ from sqlalchemy.orm import sessionmaker
 from uuid import uuid4
 from datetime import datetime
 
-# Importamos las implementaciones reales y modelos
 from fcore.infrastructure.database.models.base_db_model import Base
 from fcore.infrastructure.database.unit_of_work import SqlAlchemyUnitOfWork
 from fcore.core.entities.role import Role
 from fcore.core.entities.analyst import Analyst
 
-# --- Setup de Base de Datos en Memoria ---
 @pytest.fixture(scope="function")
 def session_factory():
-    """
-    Crea una base de datos SQLite en memoria para cada test.
-    """
+
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False})
     Base.metadata.create_all(engine)
-    
-    # Creamos el factory
+
     TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
     
     return TestingSessionLocal

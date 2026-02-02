@@ -23,8 +23,8 @@ app = FastAPI(title="Fraud Detection System API")
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    
-    "*" 
+    "http://172.31.18.167",
+    "http:///54.226.207.171"
 ]
 
 app.add_middleware(
