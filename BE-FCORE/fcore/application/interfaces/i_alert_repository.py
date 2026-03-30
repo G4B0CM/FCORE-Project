@@ -18,5 +18,3 @@ class IAlertRepository(ABC):
     def get_all(self, limit: int = 100, offset: int = 0) -> List[Alert]:
         pass
     
-    # We won't have a generic update, but specific actions can be added later
-    # e.g., assign_to_analyst, change_status, etc.

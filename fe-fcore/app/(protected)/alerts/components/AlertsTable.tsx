@@ -43,7 +43,17 @@ export default function AlertsTable() {
       <div className="flex align-items-center justify-content-between mb-3">
         <h2 className="text-600 m-0">Alertas</h2>
       </div>
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['id', 'action']} columns={columns as any} paginator rows={20} rowsPerPageOptions={[20, 50, 100]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['id', 'action']} 
+      columns={columns as any} 
+      paginator rows={20} 
+      rowsPerPageOptions={[20, 50, 100]}
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3" />
       {selected && (
         <div className="mt-3 surface-card p-3 border-round">
           <h3 className="m-0 mb-2">Detalle de alerta</h3>

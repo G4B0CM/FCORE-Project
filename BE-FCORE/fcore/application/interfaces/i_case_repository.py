@@ -4,7 +4,6 @@ from uuid import UUID
 from ...core.entities.case import Case
 
 class ICaseRepository(ABC):
-    """Interface for the Case repository."""
 
     @abstractmethod
     def create(self, case: Case) -> Case:

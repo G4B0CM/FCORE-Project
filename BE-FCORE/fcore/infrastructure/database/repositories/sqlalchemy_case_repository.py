@@ -5,6 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from ....core.entities.case import Case
 from ....application.interfaces.i_case_repository import ICaseRepository
 from ..models.case_model import CaseModel
+from ..models.alert_model import AlertModel
 from ....core.errors.case_errors import CaseAlreadyExistsError
 
 class SqlAlchemyCaseRepository(ICaseRepository):
@@ -32,7 +33,7 @@ class SqlAlchemyCaseRepository(ICaseRepository):
     def _get_eager_loading_options(self):
         return [
             joinedload(CaseModel.analyst),
-            joinedload(CaseModel.alert).joinedload("transaction")
+            joinedload(CaseModel.alert).joinedload(AlertModel.transaction)
         ]
 
     def find_by_id(self, id: UUID) -> Optional[Case]:

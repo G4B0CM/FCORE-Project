@@ -20,7 +20,6 @@ export default function TransactionsTable() {
 
   const columns = useMemo(
     () => [
-      { field: 'id', header: 'ID', sortable: true },
       { field: 'customer.full_name', header: 'Cliente', sortable: true, body: (r: any) => r.customer?.full_name ?? r.customer_id },
       { field: 'merchant.name', header: 'Comercio', sortable: true, body: (r: any) => r.merchant?.name ?? r.merchant_id },
       { field: 'amount', header: 'Monto', sortable: true, body: (r: any) => <TagCell value={Number(r.amount).toFixed(2)} severity="info" /> },
@@ -48,7 +47,17 @@ export default function TransactionsTable() {
         <h2 className="text-600 m-0">Transacciones</h2>
         <AppButton label="Registrar" icon="pi pi-plus" severity="primary" onClick={() => setOpenCreate(true)} />
       </div>
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['id', 'customer.full_name', 'merchant.name', 'channel', 'country']} columns={columns as any} paginator rows={20} rowsPerPageOptions={[20, 50, 100]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['id', 'customer.full_name', 'merchant.name', 'channel', 'country']} 
+      columns={columns as any} 
+      paginator rows={20} 
+      rowsPerPageOptions={[20, 50, 100]}
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3" />
       {openCreate && (
         <div>
           <TransactionForm />

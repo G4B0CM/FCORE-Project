@@ -20,7 +20,7 @@ class Case:
     Represents an investigation case opened by an analyst for an alert.
     """
     alert_id: UUID
-    analyst_id: UUID # The analyst assigned to the case
+    analyst_id: UUID 
     decision: CaseDecision = CaseDecision.PENDING
     notes: Optional[str] = None
     created_at: datetime = field(default_factory=datetime.utcnow)

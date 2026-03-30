@@ -96,7 +96,18 @@ export default function CustomersTable() {
         <AppButton label="Nuevo cliente" icon="pi pi-plus" severity="primary" onClick={() => setOpenCreate(true)} />
       </div>
 
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['full_name', 'document_number', 'segment', 'risk_profile']} columns={columns as any} paginator rows={10} rowsPerPageOptions={[10, 20, 50]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['full_name', 'document_number', 'segment', 'risk_profile']} 
+      columns={columns as any} 
+      paginator 
+      rows={10} 
+      rowsPerPageOptions={[10, 20, 50]}
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3" />
 
       <CustomerFormDialog visible={openCreate} onClose={() => setOpenCreate(false)} title="Nuevo cliente" initialValues={{ full_name: '', document_number: '', segment: '', age: null }} submitLabel="Crear" onValid={onCreateValid} />
 

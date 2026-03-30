@@ -103,6 +103,9 @@ export default function AnalystsTable() {
         paginator
         rows={10}
         rowsPerPageOptions={[10, 20, 50]}
+        rounded="2xl"
+        elevated
+        containerClassName="mb-3"
       />
 
       <AnalystFormDialog

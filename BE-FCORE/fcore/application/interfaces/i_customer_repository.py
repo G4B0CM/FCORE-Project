@@ -4,7 +4,6 @@ from uuid import UUID
 from ...core.entities.customer import Customer
 
 class ICustomerRepository(ABC):
-    """Interface for the Customer repository."""
 
     @abstractmethod
     def create(self, customer: Customer) -> Customer:

@@ -38,26 +38,32 @@ export default function TransactionFormDialog({ visible, onClose, title, initial
       onValid={onValid}
       onInvalid={() => {}}
     >
-      <div className="grid pt-2 gap-4">
-        <div className="col-12 md:col-6">
+      <div className="grid mt-2 gap-4">
+        <div className="col-12">
           <FormInputField name="customer_id" label="Customer ID" validators={[required, minLen(10)]} />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12">
           <FormInputField name="merchant_id" label="Merchant ID" validators={[required, minLen(10)]} />
         </div>
-        <div className="col-12 md:col-6">
-          <FormNumberField name="amount" label="Monto" validators={[numberBetween(0.01 as any, 99999999 as any)]} />
+        <div className="col-12">
+          <div className='flex gap-2'>
+            <div className='flex-1'>
+              <FormNumberField className="flex-1 min-w-0 w-full" name="amount" label="Monto" validators={[numberBetween(0.01 as any, 99999999 as any)]} />
+            </div>
+            <div className='flex-1'>
+              <FormSelectField className="flex-1 min-w-0" name="channel" label="Canal" options={CHANNEL_OPTIONS} validators={[selectRequired]} />
+            </div>
+          </div>
+          
         </div>
-        <div className="col-12 md:col-6">
-          <FormSelectField name="channel" label="Canal" options={CHANNEL_OPTIONS} validators={[selectRequired]} />
-        </div>
-        <div className="col-12 md:col-6">
+
+        <div className="col-12">
           <FormInputField name="device_id" label="Device ID" />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12">
           <FormInputField name="ip_address" label="IP" />
         </div>
-        <div className="col-12 md:col-6">
+        <div className="col-12">
           <FormInputField name="country" label="País (ISO2)" />
         </div>
       </div>

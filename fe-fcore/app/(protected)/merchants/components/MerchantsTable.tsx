@@ -89,7 +89,17 @@ export default function MerchantsTable() {
         <AppButton label="Nuevo comercio" icon="pi pi-plus" severity="primary" onClick={() => setOpenCreate(true)} />
       </div>
 
-      <DataTablePro value={rows} dataKey="id" loading={loading} globalFilterFields={['name', 'category', 'risk_level']} columns={columns as any} paginator rows={10} rowsPerPageOptions={[10, 20, 50]} />
+      <DataTablePro 
+      value={rows} 
+      dataKey="id" 
+      loading={loading} 
+      globalFilterFields={['name', 'category', 'risk_level']} 
+      columns={columns as any} 
+      paginator rows={10} 
+      rowsPerPageOptions={[10, 20, 50]} 
+      rounded="2xl"
+      elevated
+      containerClassName="mb-3"/>
 
       <MerchantFormDialog visible={openCreate} onClose={() => setOpenCreate(false)} title="Nuevo comercio" initialValues={{ name: '', category: '' }} submitLabel="Crear" onValid={onCreateValid} />
 

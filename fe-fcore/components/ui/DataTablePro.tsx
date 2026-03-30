@@ -13,6 +13,7 @@ import { Column } from 'primereact/column';
 import { IconField } from 'primereact/iconfield';
 import { InputIcon } from 'primereact/inputicon';
 import { InputText } from 'primereact/inputtext';
+import { classNames } from 'primereact/utils';
 
 export type Align = 'left' | 'center' | 'right';
 
@@ -59,6 +60,9 @@ export type DataTableProProps<T extends Record<string, unknown>> = {
   stateKey?: string;
   stateStorage?: 'session' | 'local';
   rowsPerPageOptions?: number[];
+  containerClassName?: string;
+  rounded?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl';
+  elevated?: boolean;
 };
 
 export default function DataTablePro<T extends Record<string, unknown>>(props: DataTableProProps<T>) {
@@ -87,7 +91,10 @@ export default function DataTablePro<T extends Record<string, unknown>>(props: D
     className,
     stateKey,
     stateStorage,
-    rowsPerPageOptions
+    rowsPerPageOptions,
+    containerClassName,
+    rounded = 'md',
+    elevated = false,
   } = props;
 
   const controlledFilters = !!filters;
@@ -96,6 +103,8 @@ export default function DataTablePro<T extends Record<string, unknown>>(props: D
   });
   const [globalValue, setGlobalValue] = useState('');
   const appliedFilters = controlledFilters ? (filters as DataTableFilterMeta) : localFilters;
+  const radiusClass =
+    rounded === 'none' ? '' : `border-round${rounded === 'md' ? '' : `-${rounded}`}`;
 
   const header = useMemo(() => {
     if (headerRight)
@@ -135,54 +144,56 @@ export default function DataTablePro<T extends Record<string, unknown>>(props: D
   }, [headerLeft, headerRight, globalValue, globalPlaceholder, controlledFilters, appliedFilters, onFilter]);
 
   return (
-    <DataTable
-      value={value}
-      dataKey={dataKey}
-      loading={loading}
-      paginator={paginator}
-      rows={rows}
-      rowsPerPageOptions={rowsPerPageOptions}
-      totalRecords={totalRecords}
-      lazy={lazy}
-      onPage={onPage}
-      onSort={onSort}
-      onFilter={(e) => {
-        if (controlledFilters) onFilter?.(e);
-        else setLocalFilters(e.filters);
-      }}
-      filters={appliedFilters}
-      filterDisplay="row"
-      globalFilterFields={globalFilterFields}
-      header={header}
-      emptyMessage={emptyMessage}
-      className={className}
-      selectionMode={selectionMode}
-      selection={selection}
-      onSelectionChange={onSelectionChange as any}
-      responsiveLayout={responsiveLayout}
-      stateKey={stateKey}
-      stateStorage={stateStorage}
-      cellSelection={false}
-    >
-      {columns.map((c, i) => (
-        <Column
-          key={c.field ?? `col-${i}`}
-          field={c.field}
-          header={c.header}
-          body={c.body as any}
-          sortable={c.sortable}
-          filter={c.filter}
-          filterElement={c.filterElement as any}
-          filterPlaceholder={c.filterPlaceholder}
-          filterMatchMode={c.filterMatchMode as any}
-          showFilterMenu={c.showFilterMenu}
-          dataType={c.dataType}
-          style={c.style}
-          align={c.align}
-          frozen={c.frozen}
-          expander={c.expander}
-        />
-      ))}
-    </DataTable>
+    <div className={classNames('surface-card overflow-hidden', radiusClass, elevated && 'shadow-1', containerClassName)}>
+      <DataTable
+        value={value}
+        dataKey={dataKey}
+        loading={loading}
+        paginator={paginator}
+        rows={rows}
+        rowsPerPageOptions={rowsPerPageOptions}
+        totalRecords={totalRecords}
+        lazy={lazy}
+        onPage={onPage}
+        onSort={onSort}
+        onFilter={(e) => {
+          if (controlledFilters) onFilter?.(e);
+          else setLocalFilters(e.filters);
+        }}
+        filters={appliedFilters}
+        filterDisplay="row"
+        globalFilterFields={globalFilterFields}
+        header={header}
+        emptyMessage={emptyMessage}
+        className={className}
+        selectionMode={selectionMode}
+        selection={selection}
+        onSelectionChange={onSelectionChange as any}
+        responsiveLayout={responsiveLayout}
+        stateKey={stateKey}
+        stateStorage={stateStorage}
+        cellSelection={false}
+      >
+        {columns.map((c, i) => (
+          <Column
+            key={c.field ?? `col-${i}`}
+            field={c.field}
+            header={c.header}
+            body={c.body as any}
+            sortable={c.sortable}
+            filter={c.filter}
+            filterElement={c.filterElement as any}
+            filterPlaceholder={c.filterPlaceholder}
+            filterMatchMode={c.filterMatchMode as any}
+            showFilterMenu={c.showFilterMenu}
+            dataType={c.dataType}
+            style={c.style}
+            align={c.align}
+            frozen={c.frozen}
+            expander={c.expander}
+          />
+        ))}
+      </DataTable>
+    </div>
   );
 }
